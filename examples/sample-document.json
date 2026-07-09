@@ -1,0 +1,35 @@
+{
+  "id": "doc-554032-sp",
+  "source": {
+    "type": "sharepoint",
+    "instance": "https://company.sharepoint.com",
+    "connectorVersion": "1.2.0"
+  },
+  "content": {
+    "mimeType": "application/pdf",
+    "text": "Enterprise standard and guideline details...",
+    "claimCheckUri": "s3://claim-check-bucket/temp/doc-554032-sp.pdf"
+  },
+  "metadata": {
+    "title": "2026 Fiscal Strategy",
+    "author": "Jane Doe",
+    "lastModified": "2026-07-09T12:00:00Z"
+  },
+  "security": {
+    "inheritanceEnabled": true,
+    "permissions": [
+      {
+        "identity": "S-1-5-21-3623814890-112469",
+        "identityType": "windows-sid",
+        "displayName": "Finance-Admins",
+        "access": "read"
+      },
+      {
+        "identity": "group:executives",
+        "identityType": "oauth-group",
+        "displayName": "Executive Board",
+        "access": "read"
+      }
+    ]
+  }
+}

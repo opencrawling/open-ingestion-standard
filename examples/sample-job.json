@@ -1,0 +1,44 @@
+{
+  "version": "ois/v1alpha1",
+  "metadata": {
+    "name": "sharepoint-finance-crawl",
+    "owner": "data-platform-team"
+  },
+  "spec": {
+    "schedule": "0 0 * * *",
+    "connector": {
+      "type": "sharepoint-source",
+      "config": {
+        "siteUrl": "https://company.sharepoint.com/sites/finance",
+        "authentication": {
+          "type": "azure-ad-app",
+          "secretRef": "sharepoint-ad-secret"
+        }
+      }
+    },
+    "pipeline": {
+      "textExtraction": {
+        "tikaEnabled": true,
+        "ocrEnabled": false
+      },
+      "chunking": {
+        "strategy": "token-split",
+        "maxTokens": 500,
+        "overlap": 50
+      },
+      "embedding": {
+        "model": "mxbai-embed-large",
+        "provider": "ollama",
+        "endpoint": "http://ollama:11434"
+      }
+    },
+    "output": {
+      "type": "pgvector",
+      "config": {
+        "table": "finance_document_chunks",
+        "dimensions": 1024,
+        "connectionRef": "postgres-credentials"
+      }
+    }
+  }
+}

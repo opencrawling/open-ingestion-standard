@@ -1,0 +1,126 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://opencrawling.org/schemas/ois-job-schema.json",
+  "title": "OIS Ingestion Job Configuration Schema",
+  "description": "Standard schema for declaring, scaling, and managing ingestion crawl jobs across vendors.",
+  "type": "OBJECT",
+  "required": [
+    "version",
+    "metadata",
+    "spec"
+  ],
+  "properties": {
+    "version": {
+      "type": "STRING",
+      "description": "API/Specification version used (e.g. ois/v1alpha1)."
+    },
+    "metadata": {
+      "type": "OBJECT",
+      "required": [
+        "name"
+      ],
+      "properties": {
+        "name": {
+          "type": "STRING",
+          "description": "Unique identify name of the crawl job."
+        },
+        "owner": {
+          "type": "STRING",
+          "description": "Owner group or email responsible for the job."
+        }
+      }
+    },
+    "spec": {
+      "type": "OBJECT",
+      "required": [
+        "schedule",
+        "connector",
+        "output"
+      ],
+      "properties": {
+        "schedule": {
+          "type": "STRING",
+          "description": "Standard crontab schedule pattern indicating when to trigger the crawl job."
+        },
+        "connector": {
+          "type": "OBJECT",
+          "required": [
+            "type",
+            "config"
+          ],
+          "properties": {
+            "type": {
+              "type": "STRING",
+              "description": "Identifier of the source connector class (e.g. sharepoint-source, s3-source)."
+            },
+            "config": {
+              "type": "OBJECT",
+              "description": "Connection endpoints, credentials reference, and connector-specific scan options.",
+              "additionalProperties": true
+            }
+          }
+        },
+        "pipeline": {
+          "type": "OBJECT",
+          "properties": {
+            "textExtraction": {
+              "type": "OBJECT",
+              "properties": {
+                "tikaEnabled": { "type": "BOOLEAN" },
+                "ocrEnabled": { "type": "BOOLEAN" }
+              }
+            },
+            "chunking": {
+              "type": "OBJECT",
+              "required": [
+                "strategy"
+              ],
+              "properties": {
+                "strategy": {
+                  "type": "STRING",
+                  "enum": [
+                    "token-split",
+                    "sentence-split",
+                    "page-split"
+                  ]
+                },
+                "maxTokens": { "type": "INTEGER" },
+                "overlap": { "type": "INTEGER" }
+              }
+            },
+            "embedding": {
+              "type": "OBJECT",
+              "required": [
+                "model",
+                "provider"
+              ],
+              "properties": {
+                "model": { "type": "STRING" },
+                "provider": { "type": "STRING" },
+                "endpoint": { "type": "STRING", "format": "uri-reference" }
+              }
+            }
+          }
+        },
+        "output": {
+          "type": "OBJECT",
+          "required": [
+            "type",
+            "config"
+          ],
+          "properties": {
+            "type": {
+              "type": "STRING",
+              "description": "Identifier of the destination index writer connector class (e.g. pgvector, elasticsearch)."
+            },
+            "config": {
+              "type": "OBJECT",
+              "description": "Database targets, table schemas, dimension values, and vector indexing algorithms.",
+              "additionalProperties": true
+            }
+          }
+        }
+      }
+    }
+  }
+}

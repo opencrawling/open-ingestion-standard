@@ -1,0 +1,127 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://opencrawling.org/schemas/ois-document-schema.json",
+  "title": "OIS Document Payload Schema",
+  "description": "Standard schema for exchanging data and security permissions of enterprise files.",
+  "type": "OBJECT",
+  "required": [
+    "id",
+    "source",
+    "content",
+    "metadata",
+    "security"
+  ],
+  "properties": {
+    "id": {
+      "type": "STRING",
+      "description": "Unique identifier of the document in the target index."
+    },
+    "source": {
+      "type": "OBJECT",
+      "required": [
+        "type",
+        "instance"
+      ],
+      "properties": {
+        "type": {
+          "type": "STRING",
+          "description": "Repository type (e.g. sharepoint, s3, database, filesystem)."
+        },
+        "instance": {
+          "type": "STRING",
+          "format": "uri-reference",
+          "description": "Base URI of the scanned repository instance."
+        },
+        "connectorVersion": {
+          "type": "STRING",
+          "description": "Version of the repository connector used."
+        }
+      }
+    },
+    "content": {
+      "type": "OBJECT",
+      "required": [
+        "mimeType"
+      ],
+      "properties": {
+        "mimeType": {
+          "type": "STRING",
+          "description": "RFC 2046 media type of the document."
+        },
+        "text": {
+          "type": "STRING",
+          "description": "Extracted text content from the document (utf-8)."
+        },
+        "claimCheckUri": {
+          "type": "STRING",
+          "format": "uri-reference",
+          "description": "URI reference pointing to the raw binary file in shared storage."
+        }
+      }
+    },
+    "metadata": {
+      "type": "OBJECT",
+      "description": "Arbitrary key-value metadata map extracted from the source file.",
+      "properties": {
+        "title": { "type": "STRING" },
+        "author": { "type": "STRING" },
+        "lastModified": { "type": "STRING", "format": "date-time" }
+      },
+      "additionalProperties": true
+    },
+    "security": {
+      "type": "OBJECT",
+      "required": [
+        "inheritanceEnabled",
+        "permissions"
+      ],
+      "properties": {
+        "inheritanceEnabled": {
+          "type": "BOOLEAN",
+          "description": "Indicates whether the document inherits ACL settings from its folder structure."
+        },
+        "permissions": {
+          "type": "ARRAY",
+          "items": {
+            "type": "OBJECT",
+            "required": [
+              "identity",
+              "identityType",
+              "access"
+            ],
+            "properties": {
+              "identity": {
+                "type": "STRING",
+                "description": "Unique identifier of the user or group (e.g. Active Directory SID or email)."
+              },
+              "identityType": {
+                "type": "STRING",
+                "enum": [
+                  "windows-sid",
+                  "oauth-group",
+                  "user-principal-name",
+                  "local-role",
+                  "public"
+                ],
+                "description": "Authentication namespace/type of the identity."
+              },
+              "displayName": {
+                "type": "STRING",
+                "description": "Human-readable label for debugging audit logs."
+              },
+              "access": {
+                "type": "STRING",
+                "enum": [
+                  "read",
+                  "write",
+                  "deny"
+                ],
+                "description": "Permission rule matching the security constraint."
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

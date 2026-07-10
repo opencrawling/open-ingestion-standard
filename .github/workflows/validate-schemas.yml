@@ -1,0 +1,46 @@
+name: Validate OIS Schemas
+
+on:
+  push:
+    branches: [ master, main ]
+  pull_request:
+    branches: [ master, main ]
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout codebase
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: |
+          pip install jsonschema pyyaml
+
+      - name: Run schema validations
+        run: |
+          python -c "
+          import json, yaml, jsonschema
+          
+          # Validate Document Schema
+          doc_schema = json.load(open('schemas/document.schema.json'))
+          doc_data = json.load(open('examples/sample-document.json'))
+          jsonschema.validate(doc_data, doc_schema)
+          print('Document payload validated successfully!')
+          
+          # Validate Job Schema against sample-job.json
+          job_schema = json.load(open('schemas/job.schema.json'))
+          job_json_data = json.load(open('examples/sample-job.json'))
+          jsonschema.validate(job_json_data, job_schema)
+          print('JSON Job payload validated successfully!')
+          
+          # Validate Job Schema against sample-job.yaml
+          job_yaml_data = yaml.safe_load(open('examples/sample-job.yaml'))
+          jsonschema.validate(job_yaml_data, job_schema)
+          print('YAML Job payload validated successfully!')
+          "

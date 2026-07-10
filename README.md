@@ -1,3 +1,19 @@
+<!--
+Copyright © 2026 the original author or authors (piergiorgio@apache.org)
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+-->
+
 # Open Ingestion Standard (OIS) 🌐
 
 An open specification, community manifesto, and schema standard for secure, decoupled, and vendor-neutral enterprise data ingestion pipelines.
@@ -23,7 +39,8 @@ OIS defines:
   * **`job.schema.json`**: Schema validation rules for job configurations.
 * **`examples/`**: Payload examples.
   * **`sample-document.json`**: Complete OIS document payload showing nested ACL SIDs.
-  * **`sample-job.yaml`**: Complete OIS connector configuration file.
+  * **`sample-job.json`**: Complete OIS job configuration file (JSON format).
+  * **`sample-job.yaml`**: Complete OIS job configuration file (YAML format).
 * **`spec/`**: In-depth markdown documentation covering claim check, ACL translation, and error schemas.
 
 ---
@@ -41,8 +58,11 @@ npm install -g ajv-cli
 # Validate a document payload against the OIS schema
 ajv validate -s schemas/document.schema.json -d examples/sample-document.json
 
-# Validate a job configuration against the OIS schema
+# Validate a job configuration (YAML) against the OIS schema
 ajv validate -s schemas/job.schema.json -d examples/sample-job.yaml
+
+# Validate a job configuration (JSON) against the OIS schema
+ajv validate -s schemas/job.schema.json -d examples/sample-job.json
 ```
 
 ---

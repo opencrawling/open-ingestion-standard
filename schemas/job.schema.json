@@ -1,9 +1,10 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "https://opencrawling.org/schemas/ois-job-schema.json",
+  "$comment": "Copyright © 2026 the original author or authors (piergiorgio@apache.org). Licensed under the Apache License, Version 2.0 (the 'License'); you may not use this file except in compliance with the License. You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0. Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an 'AS IS' BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.",
   "title": "OIS Ingestion Job Configuration Schema",
   "description": "Standard schema for declaring, scaling, and managing ingestion crawl jobs across vendors.",
-  "type": "OBJECT",
+  "type": "object",
   "required": [
     "version",
     "metadata",
@@ -11,27 +12,27 @@
   ],
   "properties": {
     "version": {
-      "type": "STRING",
+      "type": "string",
       "description": "API/Specification version used (e.g. ois/v1alpha1)."
     },
     "metadata": {
-      "type": "OBJECT",
+      "type": "object",
       "required": [
         "name"
       ],
       "properties": {
         "name": {
-          "type": "STRING",
+          "type": "string",
           "description": "Unique identify name of the crawl job."
         },
         "owner": {
-          "type": "STRING",
+          "type": "string",
           "description": "Owner group or email responsible for the job."
         }
       }
     },
     "spec": {
-      "type": "OBJECT",
+      "type": "object",
       "required": [
         "schedule",
         "connector",
@@ -39,82 +40,92 @@
       ],
       "properties": {
         "schedule": {
-          "type": "STRING",
+          "type": "string",
           "description": "Standard crontab schedule pattern indicating when to trigger the crawl job."
         },
         "connector": {
-          "type": "OBJECT",
+          "type": "object",
           "required": [
             "type",
             "config"
           ],
           "properties": {
             "type": {
-              "type": "STRING",
+              "type": "string",
               "description": "Identifier of the source connector class (e.g. sharepoint-source, s3-source)."
             },
             "config": {
-              "type": "OBJECT",
+              "type": "object",
               "description": "Connection endpoints, credentials reference, and connector-specific scan options.",
               "additionalProperties": true
             }
           }
         },
         "pipeline": {
-          "type": "OBJECT",
+          "type": "object",
           "properties": {
             "textExtraction": {
-              "type": "OBJECT",
+              "type": "object",
               "properties": {
-                "tikaEnabled": { "type": "BOOLEAN" },
-                "ocrEnabled": { "type": "BOOLEAN" }
+                "tikaEnabled": { "type": "boolean" },
+                "ocrEnabled": { "type": "boolean" }
               }
             },
             "chunking": {
-              "type": "OBJECT",
+              "type": "object",
               "required": [
                 "strategy"
               ],
               "properties": {
                 "strategy": {
-                  "type": "STRING",
+                  "type": "string",
                   "enum": [
                     "token-split",
                     "sentence-split",
                     "page-split"
                   ]
                 },
-                "maxTokens": { "type": "INTEGER" },
-                "overlap": { "type": "INTEGER" }
+                "maxTokens": { "type": "integer" },
+                "overlap": { "type": "integer" }
               }
             },
             "embedding": {
-              "type": "OBJECT",
+              "type": "object",
               "required": [
                 "model",
                 "provider"
               ],
               "properties": {
-                "model": { "type": "STRING" },
-                "provider": { "type": "STRING" },
-                "endpoint": { "type": "STRING", "format": "uri-reference" }
+                "model": {
+                  "type": "string",
+                  "description": "Identifier of the AI embedding model name (e.g. mxbai-embed-large, nomic-embed-text, all-minilm)."
+                },
+                "provider": {
+                  "type": "string",
+                  "description": "Embedding provider name (e.g. ollama, openai, huggingface)."
+                },
+                "endpoint": {
+                  "type": "string",
+                  "format": "uri-reference",
+                  "description": "Service endpoint URL for the embedding provider."
+                }
               }
             }
           }
         },
         "output": {
-          "type": "OBJECT",
+          "type": "object",
           "required": [
             "type",
             "config"
           ],
           "properties": {
             "type": {
-              "type": "STRING",
+              "type": "string",
               "description": "Identifier of the destination index writer connector class (e.g. pgvector, elasticsearch)."
             },
             "config": {
-              "type": "OBJECT",
+              "type": "object",
               "description": "Database targets, table schemas, dimension values, and vector indexing algorithms.",
               "additionalProperties": true
             }

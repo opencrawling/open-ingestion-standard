@@ -97,14 +97,7 @@
               },
               "identityType": {
                 "type": "string",
-                "enum": [
-                  "windows-sid",
-                  "oauth-group",
-                  "user-principal-name",
-                  "local-role",
-                  "public"
-                ],
-                "description": "Authentication namespace/type of the identity."
+                "description": "Authentication namespace/type of the identity (e.g. windows-sid, oauth-group, user-principal-name, local-role, public, or custom provider namespaces)."
               },
               "displayName": {
                 "type": "string",

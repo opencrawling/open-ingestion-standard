@@ -28,12 +28,14 @@ OIS defines:
 1. **[MANIFESTO.md](MANIFESTO.md)**: The architectural pillars of zero-trust security mapping, asynchronous claiming, and vendor-neutrality.
 2. **Unified Document Payload Schema**: A standard JSON schema to package extracted text, rich metadata, and source Access Control Lists (ACLs) containing Security SIDs.
 3. **Unified Job Configuration Schema**: A platform-agnostic configuration schema (YAML/JSON) to declare crawlers, schedule execution rates, and map search endpoints.
+4. **[ois-whitepaper.md](ois-whitepaper.md)**: Comprehensive architectural white paper detailing the enterprise ingestion crisis, pillars, schemas, and reference designs.
 
 ---
 
 ## 📂 Repository Structure
 
 * **`MANIFESTO.md`**: Core values and engineering principles.
+* **`ois-whitepaper.md`**: Comprehensive architectural white paper for OIS.
 * **`schemas/`**: Formal JSON Schema definitions.
   * **`document.schema.json`**: Schema validation rules for data exchange payloads.
   * **`job.schema.json`**: Schema validation rules for job configurations.

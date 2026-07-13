@@ -1,0 +1,49 @@
+{
+  "version": "ois/v1alpha1",
+  "metadata": {
+    "name": "bpmn2-finance-process-crawl",
+    "owner": "business-analytics-team"
+  },
+  "spec": {
+    "schedule": "*/30 * * * *",
+    "connector": {
+      "type": "bpmn2-source",
+      "config": {
+        "engineType": "camunda-platform-8",
+        "endpoint": "https://bpms.company.com/engine-rest",
+        "processDefinitionKey": "invoice-approval",
+        "includeVariables": true,
+        "includeHistory": true,
+        "authentication": {
+          "type": "oauth2",
+          "clientId": "ois-scanner",
+          "secretRef": "bpmn2-scanner-oauth-secret"
+        }
+      }
+    },
+    "pipeline": {
+      "textExtraction": {
+        "tikaEnabled": false,
+        "ocrEnabled": false
+      },
+      "chunking": {
+        "strategy": "token-split",
+        "maxTokens": 500,
+        "overlap": 50
+      },
+      "embedding": {
+        "model": "all-minilm",
+        "provider": "ollama",
+        "endpoint": "http://ollama:11434"
+      }
+    },
+    "output": {
+      "type": "pgvector",
+      "config": {
+        "table": "finance_workflow_chunks",
+        "dimensions": 384,
+        "connectionRef": "postgres-credentials"
+      }
+    }
+  }
+}

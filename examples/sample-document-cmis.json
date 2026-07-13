@@ -1,0 +1,50 @@
+{
+  "id": "cmis-doc-99482-corp",
+  "source": {
+    "type": "cmis",
+    "instance": "https://ecm.company.com/fncmis",
+    "connectorVersion": "1.0.0"
+  },
+  "content": {
+    "mimeType": "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+    "text": "This document contains corporate governance guidelines...",
+    "claimCheckUri": "s3://claim-check-bucket/temp/cmis-doc-99482-corp.docx"
+  },
+  "metadata": {
+    "title": "Corporate Governance Guidelines",
+    "author": "John Smith",
+    "lastModified": "2026-07-13T10:15:30Z",
+    "cmis:objectId": "fn_doc_99482",
+    "cmis:name": "Corporate_Governance_v2.docx",
+    "cmis:objectTypeId": "cmis:document",
+    "cmis:createdBy": "jsmith",
+    "cmis:creationDate": "2026-06-01T09:00:00Z",
+    "cmis:lastModifiedBy": "jsmith",
+    "cmis:changeToken": "token-xyz-12345",
+    "cmis:versionLabel": "2.0",
+    "cmis:isLatestVersion": true
+  },
+  "security": {
+    "inheritanceEnabled": false,
+    "permissions": [
+      {
+        "identity": "admin-group",
+        "identityType": "cmis-group",
+        "displayName": "ECM Administrators",
+        "access": "write"
+      },
+      {
+        "identity": "employee-group",
+        "identityType": "cmis-group",
+        "displayName": "All Employees",
+        "access": "read"
+      },
+      {
+        "identity": "former-employee",
+        "identityType": "cmis-user",
+        "displayName": "Former Employee",
+        "access": "deny"
+      }
+    ]
+  }
+}

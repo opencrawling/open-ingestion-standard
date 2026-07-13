@@ -26,7 +26,7 @@
       "properties": {
         "type": {
           "type": "string",
-          "description": "Repository type (e.g. sharepoint, s3, database, filesystem)."
+          "description": "Repository type (e.g. sharepoint, s3, database, filesystem, cmis, bpmn2)."
         },
         "instance": {
           "type": "string",
@@ -62,11 +62,151 @@
     },
     "metadata": {
       "type": "object",
-      "description": "Arbitrary key-value metadata map extracted from the source file.",
+      "description": "Arbitrary key-value metadata map extracted from the source file, including standard CMIS repository properties and BPMN 2.0 workflow engine execution states.",
       "properties": {
         "title": { "type": "string" },
         "author": { "type": "string" },
-        "lastModified": { "type": "string", "format": "date-time" }
+        "lastModified": { "type": "string", "format": "date-time" },
+        "cmis:objectId": {
+          "type": "string",
+          "description": "The unique identifier of the object in the CMIS repository."
+        },
+        "cmis:name": {
+          "type": "string",
+          "description": "The name of the object in the CMIS repository."
+        },
+        "cmis:objectTypeId": {
+          "type": "string",
+          "description": "The type of the CMIS object (e.g. cmis:document, cmis:folder)."
+        },
+        "cmis:createdBy": {
+          "type": "string",
+          "description": "The user who created the CMIS object."
+        },
+        "cmis:creationDate": {
+          "type": "string",
+          "format": "date-time",
+          "description": "The timestamp when the CMIS object was created."
+        },
+        "cmis:lastModifiedBy": {
+          "type": "string",
+          "description": "The user who last modified the CMIS object."
+        },
+        "cmis:changeToken": {
+          "type": "string",
+          "description": "The change token of the CMIS object."
+        },
+        "cmis:versionLabel": {
+          "type": "string",
+          "description": "The version label of the CMIS document."
+        },
+        "cmis:isLatestVersion": {
+          "type": "boolean",
+          "description": "Indicates whether this is the latest version of the CMIS document."
+        },
+        "bpmn:processInstanceId": {
+          "type": "string",
+          "description": "The unique identifier of the workflow process instance."
+        },
+        "bpmn:processDefinitionId": {
+          "type": "string",
+          "description": "The unique identifier of the BPMN 2.0 process definition."
+        },
+        "bpmn:processDefinitionKey": {
+          "type": "string",
+          "description": "The business key/identifier of the BPMN 2.0 process definition."
+        },
+        "bpmn:processDefinitionName": {
+          "type": "string",
+          "description": "The human-readable name of the BPMN 2.0 process definition."
+        },
+        "bpmn:businessKey": {
+          "type": "string",
+          "description": "The business key associated with the process instance."
+        },
+        "bpmn:status": {
+          "type": "string",
+          "enum": [
+            "ACTIVE",
+            "SUSPENDED",
+            "COMPLETED",
+            "EXTERNALLY_TERMINATED",
+            "INTERNALLY_TERMINATED"
+          ],
+          "description": "The execution status of the workflow instance."
+        },
+        "bpmn:startDate": {
+          "type": "string",
+          "format": "date-time",
+          "description": "The timestamp when the process instance was started."
+        },
+        "bpmn:endDate": {
+          "type": "string",
+          "format": "date-time",
+          "description": "The timestamp when the process instance completed or terminated."
+        },
+        "bpmn:startUserId": {
+          "type": "string",
+          "description": "The identifier of the user who initiated the process instance."
+        },
+        "bpmn:variables": {
+          "type": "object",
+          "description": "Key-value map of process/workflow variables.",
+          "additionalProperties": true
+        },
+        "bpmn:activeTasks": {
+          "type": "array",
+          "description": "List of active user tasks or activities in the process instance.",
+          "items": {
+            "type": "object",
+            "required": [
+              "taskId",
+              "taskName"
+            ],
+            "properties": {
+              "taskId": {
+                "type": "string",
+                "description": "The unique identifier of the active task instance."
+              },
+              "taskName": {
+                "type": "string",
+                "description": "The human-readable name of the active task."
+              },
+              "taskDefinitionKey": {
+                "type": "string",
+                "description": "The activity ID/key of the task in the BPMN XML."
+              },
+              "assignee": {
+                "type": "string",
+                "description": "The user currently assigned to the task."
+              },
+              "candidateUsers": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "description": "Users who are candidates to claim/perform the task."
+              },
+              "candidateGroups": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "description": "User groups who are candidates to claim/perform the task."
+              },
+              "dueDate": {
+                "type": "string",
+                "format": "date-time",
+                "description": "The task due date."
+              },
+              "createTime": {
+                "type": "string",
+                "format": "date-time",
+                "description": "The timestamp when the task was created."
+              }
+            }
+          }
+        }
       },
       "additionalProperties": true
     },
@@ -97,7 +237,7 @@
               },
               "identityType": {
                 "type": "string",
-                "description": "Authentication namespace/type of the identity (e.g. windows-sid, oauth-group, user-principal-name, local-role, public, or custom provider namespaces)."
+                "description": "Authentication namespace/type of the identity (e.g. windows-sid, oauth-group, user-principal-name, local-role, public, cmis-user, cmis-group, bpmn-assignee, bpmn-candidate-user, bpmn-candidate-group, or custom provider namespaces)."
               },
               "displayName": {
                 "type": "string",

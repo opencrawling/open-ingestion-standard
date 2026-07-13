@@ -22,7 +22,7 @@ An open specification, community manifesto, and schema standard for secure, deco
 
 ## 📖 Overview
 
-The **Open Ingestion Standard (OIS)** solves the challenge of moving data from enterprise source systems (such as SharePoint, S3 buckets, and relational databases) to downstream vector stores, LLMs, and RAG architectures.
+The **Open Ingestion Standard (OIS)** solves the challenge of moving data from enterprise source systems (such as SharePoint, S3 buckets, relational databases, CMIS repositories, and BPMN 2.0 workflow engines) to downstream vector stores, LLMs, and RAG architectures.
 
 OIS defines:
 1. **[MANIFESTO.md](MANIFESTO.md)**: The architectural pillars of zero-trust security mapping, asynchronous claiming, and vendor-neutrality.
@@ -75,3 +75,10 @@ We welcome standard designers, platform developers, and enterprise search vendor
 1. Review the [MANIFESTO.md](MANIFESTO.md).
 2. Read the specifications in the `spec/` folder.
 3. Open a **Request for Comments (RFC)** issue or submit a Pull Request to refine schemas.
+
+---
+
+## 📬 Contact & Support
+
+For general inquiries, community feedback, or partner inquiries, please email us at [info@opencrawling.org](mailto:info@opencrawling.org).
+

@@ -4,7 +4,7 @@
 ---
 
 ## Executive Summary
-As enterprises increasingly adopt Retrieval-Augmented Generation (RAG) and Large Language Model (LLM) architectures, the bottleneck has shifted from model capability to **data logistics**. Extracting structured and unstructured information from legacy repository ecosystems—such as SharePoint, cloud storage buckets, databases, and local file systems—and routing it to vector databases remains a highly brittle, insecure, and vendor-locked endeavor.
+As enterprises increasingly adopt Retrieval-Augmented Generation (RAG) and Large Language Model (LLM) architectures, the bottleneck has shifted from model capability to **data logistics**. Extracting structured and unstructured information from legacy repository ecosystems—such as SharePoint, cloud storage buckets, databases, local file systems, CMIS repositories, and BPMN 2.0 workflow engines—and routing it to vector databases remains a highly brittle, insecure, and vendor-locked endeavor.
 
 The **Open Ingestion Standard (OIS)** is a platform-agnostic specification, community manifesto, and schema standard designed to establish:
 1. **Zero-Trust Security Preservation:** Propagating legacy system Access Control Lists (ACLs) directly to vector indexes.
@@ -202,6 +202,23 @@ The `job.schema.json` defines declarative templates to schedule and orchestrate 
   }
 }
 ```
+
+### C. CMIS and BPMN 2.0 Extensions
+
+To support legacy Enterprise Content Management (ECM) and Business Process Management (BPM) ecosystems, OIS defines standard mappings for:
+
+#### 1. Content Management Interoperability Services (CMIS)
+Enterprise repositories complying with the CMIS standard expose hierarchical objects (documents, folders) and detailed metadata. OIS represents CMIS objects by mapping:
+* **Source Type**: Set `source.type` to `cmis`.
+* **Metadata Envelope**: CMIS-specific properties are prefixed with `cmis:` (e.g., `cmis:objectId`, `cmis:objectTypeId`, `cmis:versionLabel`, `cmis:creationDate`, `cmis:createdBy`).
+* **Security Model**: CMIS Access Control Entries (ACEs) map directly to OIS `security.permissions`, setting the identity types to `cmis-user` or `cmis-group`.
+
+#### 2. BPMN 2.0 Business Processes & Workflow Instances
+To index the dynamic execution state of process instances from engines like Camunda, Flowable, or jBPM, OIS represents workflow instances as queryable documents:
+* **Source Type**: Set `source.type` to `bpmn2`.
+* **Metadata Envelope**: Ingests process definition, variables, and history under `bpmn:` prefix (e.g., `bpmn:processInstanceId`, `bpmn:processDefinitionKey`, `bpmn:status`, `bpmn:variables`, `bpmn:activeTasks`).
+* **Active Tasks Mapping**: The active activities, assignees, and candidate groups are indexed inside `bpmn:activeTasks` to support real-time context mapping.
+* **Security Model**: Security restrictions map dynamically based on runtime participation roles. The `security.permissions` array registers identities with types like `bpmn-assignee`, `bpmn-candidate-user`, `bpmn-candidate-group`, or `bpmn-supervisor` to restrict query visibility to users involved in the active task or process hierarchy.
 
 ---
 

@@ -1,0 +1,48 @@
+{
+  "version": "ois/v1alpha1",
+  "metadata": {
+    "name": "cmis-corporate-crawl",
+    "owner": "ecm-compliance-team"
+  },
+  "spec": {
+    "schedule": "0 2 * * *",
+    "connector": {
+      "type": "cmis-source",
+      "config": {
+        "bindingType": "browser",
+        "url": "https://ecm.company.com/fncmis",
+        "repositoryId": "corporate-store",
+        "folderPath": "/Root/Departments/Corporate",
+        "authentication": {
+          "type": "basic-auth",
+          "username": "ois-scanner",
+          "secretRef": "cmis-scanner-credentials"
+        }
+      }
+    },
+    "pipeline": {
+      "textExtraction": {
+        "tikaEnabled": true,
+        "ocrEnabled": true
+      },
+      "chunking": {
+        "strategy": "token-split",
+        "maxTokens": 1000,
+        "overlap": 100
+      },
+      "embedding": {
+        "model": "mxbai-embed-large",
+        "provider": "ollama",
+        "endpoint": "http://ollama:11434"
+      }
+    },
+    "output": {
+      "type": "pgvector",
+      "config": {
+        "table": "corporate_document_chunks",
+        "dimensions": 1024,
+        "connectionRef": "postgres-credentials"
+      }
+    }
+  }
+}

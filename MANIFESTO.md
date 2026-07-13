@@ -32,7 +32,7 @@ All compliant implementations of the **Open Ingestion Standard (OIS)** must adhe
 * **Synchronized Access Enforcement**: Vector search engines and AI orchestrators must ingest security metadata dynamically, ensuring that user queries return only the information they are explicitly authorized to read at the source.
 
 ### 2. Vendor-Neutral Interoperability (Data Portability)
-* **Standard Exchange Formats**: Document streams and metadata extracted from diverse source repositories (SharePoint, Amazon S3, databases, file shares) must be formatted using a uniform, vendor-neutral structure.
+* **Standard Exchange Formats**: Document streams and metadata extracted from diverse source repositories (SharePoint, Amazon S3, databases, file shares, CMIS repositories, and BPMN 2.0 workflow engines) must be formatted using a uniform, vendor-neutral structure.
 * **Declarative Pipeline Configuration**: Ingestion configurations, crawling schedules, connector profiles, and mapping tables must be represented using platform-agnostic, version-controlled formats (JSON/YAML).
 
 ### 3. Event-Driven Decoupling (Decoupled Scalability)

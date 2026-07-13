@@ -39,7 +39,7 @@ timeline
 **Focus:** Finalize current schemas, validate core zero-trust security assumptions, and formalize the extension model.
 
 - [ ] **Release OIS 1.0.0-RC1 (Release Candidate)**
-  - Finalize core validation constraints in [document.schema.json](schemas/document.schema.json) and [job.schema.json](schemas/job.schema.json).
+  - Finalize core validation constraints in [document.schema.json](schemas/document.schema.json) and [job.schema.json](schemas/job.schema.json), establishing standard extensions for CMIS repositories and BPMN 2.0 workflow engines.
   - Clarify the claim check lifecycle and requirements for temporary shared storage structures.
 - [ ] **Initiate RFC (Request for Comments) Workflows**
   - Establish a formal RFC template and process for spec amendments.

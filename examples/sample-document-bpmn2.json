@@ -1,0 +1,67 @@
+{
+  "id": "workflow-proc-88371-finance",
+  "source": {
+    "type": "bpmn2",
+    "instance": "https://bpms.company.com/engine-rest",
+    "connectorVersion": "1.0.0"
+  },
+  "content": {
+    "mimeType": "application/json",
+    "text": "Invoice approval workflow for Vendor Acme Corp. Currently at task: Review Invoice by Finance-Admins.",
+    "claimCheckUri": "s3://claim-check-bucket/temp/workflow-proc-88371-history.json"
+  },
+  "metadata": {
+    "title": "Invoice Approval - Acme Corp - $25,000",
+    "author": "process-engine",
+    "lastModified": "2026-07-13T11:45:00Z",
+    "bpmn:processInstanceId": "proc-88371-finance",
+    "bpmn:processDefinitionId": "invoice-approval:4:99281",
+    "bpmn:processDefinitionKey": "invoice-approval",
+    "bpmn:processDefinitionName": "Invoice Approval Process",
+    "bpmn:businessKey": "INV-2026-00892",
+    "bpmn:status": "ACTIVE",
+    "bpmn:startDate": "2026-07-10T08:30:00Z",
+    "bpmn:startUserId": "mcooper",
+    "bpmn:variables": {
+      "vendorName": "Acme Corp",
+      "amount": 25000.0,
+      "approvedByManager": true,
+      "department": "Finance"
+    },
+    "bpmn:activeTasks": [
+      {
+        "taskId": "task-55291",
+        "taskName": "Review Invoice",
+        "taskDefinitionKey": "reviewInvoiceTask",
+        "assignee": "jsmith",
+        "candidateUsers": ["jsmith", "rkim"],
+        "candidateGroups": ["Finance-Admins"],
+        "dueDate": "2026-07-15T17:00:00Z",
+        "createTime": "2026-07-13T09:00:00Z"
+      }
+    ]
+  },
+  "security": {
+    "inheritanceEnabled": false,
+    "permissions": [
+      {
+        "identity": "Finance-Admins",
+        "identityType": "bpmn-candidate-group",
+        "displayName": "Finance Administrators",
+        "access": "read"
+      },
+      {
+        "identity": "jsmith",
+        "identityType": "bpmn-assignee",
+        "displayName": "John Smith",
+        "access": "read"
+      },
+      {
+        "identity": "mcooper",
+        "identityType": "bpmn-initiator",
+        "displayName": "Mark Cooper",
+        "access": "read"
+      }
+    ]
+  }
+}

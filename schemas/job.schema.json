@@ -52,7 +52,7 @@
           "properties": {
             "type": {
               "type": "string",
-              "description": "Identifier of the source connector class (e.g. sharepoint-source, s3-source)."
+              "description": "Identifier of the source connector class (e.g. sharepoint-source, s3-source, cmis-source, bpmn2-source)."
             },
             "config": {
               "type": "object",

@@ -80,5 +80,7 @@ We welcome standard designers, platform developers, and enterprise search vendor
 
 ## 📬 Contact & Support
 
+Join our [Slack Community](https://join.slack.com/t/opencrawling/shared_invite/zt-43r2anb6q-YLoBsOrxCCcBWU5Up3P1rw) to discuss standard specifications, request schema enhancements, or talk with the maintainers.
+
 For general inquiries, community feedback, or partner inquiries, please email us at [info@opencrawling.org](mailto:info@opencrawling.org).
 

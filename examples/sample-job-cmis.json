@@ -25,6 +25,10 @@
         "tikaEnabled": true,
         "ocrEnabled": true
       },
+      "transformation": {
+        "strategy": "mustache",
+        "template": "Document Name: {{cmis:name}}\nCreated By: {{cmis:createdBy}}\nCreation Date: {{cmis:creationDate}}\nVersion: {{cmis:versionLabel}}\n---\n{{content.text}}"
+      },
       "chunking": {
         "strategy": "token-split",
         "maxTokens": 1000,

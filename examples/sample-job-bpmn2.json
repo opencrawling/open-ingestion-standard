@@ -26,6 +26,10 @@
         "tikaEnabled": false,
         "ocrEnabled": false
       },
+      "transformation": {
+        "strategy": "mustache",
+        "template": "Process Instance: {{bpmn:processInstanceId}}\nProcess Key: {{bpmn:processDefinitionKey}}\nStatus: {{bpmn:status}}\nStarted: {{bpmn:startDate}}\nVariables:\n{{#bpmn:variables}}\n- Key: {{key}}, Value: {{value}}\n{{/bpmn:variables}}"
+      },
       "chunking": {
         "strategy": "token-split",
         "maxTokens": 500,

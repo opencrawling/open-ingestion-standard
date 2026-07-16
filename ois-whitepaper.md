@@ -10,7 +10,7 @@ The **Open Ingestion Standard (OIS)** is a platform-agnostic specification, comm
 1. **Zero-Trust Security Preservation:** Propagating legacy system Access Control Lists (ACLs) directly to vector indexes.
 2. **Vendor-Neutral Data Exchange:** Standardizing how documents, metadata, and security payloads are formatted.
 3. **Decoupled Event-Driven Scaling:** Leveraging asynchronous brokers and the Claim Check pattern to handle large-scale enterprise data streams.
-4. **Declarative Pipeline Management:** Providing a unified schema to define crawlers, splitters, embedders, and writers.
+4. **Declarative Pipeline Management:** Providing a unified schema to define crawlers, transformers/narrativizers, splitters, embedders, and writers.
 
 This white paper details the design requirements, architectural foundations, schemas, and reference implementations of OIS.
 
@@ -65,11 +65,11 @@ Document security must be treated as a first-class citizen. Compliance requires:
 ### Pillar 2: Vendor-Neutral Interoperability
 By decoupling the source connector from the target vector writer, OIS ensures absolute flexibility:
 * **Standard Exchange Formats:** All extracted data must be encapsulated in a schema-compliant JSON structure.
-* **Declarative Pipeline Configuration:** Crawlers, schedules, chunking strategies, and embedding models must be configured using standard, platform-agnostic JSON/YAML descriptors.
+* **Declarative Pipeline Configuration:** Crawlers, schedules, transformations/narrativizations, chunking strategies, and embedding models must be configured using standard, platform-agnostic JSON/YAML descriptors.
 
 ### Pillar 3: Event-Driven Decoupling
 To achieve horizontal scaling, OIS pipelines must isolate tasks:
-* **Asynchronous Message Broker:** Document ingestion must be broken down into discrete steps (Scan $\to$ Extract $\to$ Chunk $\to$ Embed $\to$ Index) managed by an event broker (e.g., Apache Kafka).
+* **Asynchronous Message Broker:** Document ingestion must be broken down into discrete steps (Scan $\to$ Extract $\to$ Transform $\to$ Chunk $\to$ Embed $\to$ Index) managed by an event broker (e.g., Apache Kafka).
 * **Claim Check Pattern:** Standard queue messages must be lightweight. Large binary files are stored in a temporary shared repository (e.g., S3, local filesystem check), and the queue message carries a URI reference (the *claim check*) to prevent broker saturation.
 
 ### Pillar 4: Incremental Efficiency
@@ -172,6 +172,13 @@ The `job.schema.json` defines declarative templates to schedule and orchestrate 
               "properties": {
                 "tikaEnabled": { "type": "boolean" },
                 "ocrEnabled": { "type": "boolean" }
+              }
+            },
+            "transformation": {
+              "type": "object",
+              "properties": {
+                "strategy": { "type": "string", "enum": ["mustache", "json-to-text", "none"] },
+                "template": { "type": "string" }
               }
             },
             "chunking": {

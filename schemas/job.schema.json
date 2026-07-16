@@ -71,6 +71,28 @@
                 "ocrEnabled": { "type": "boolean" }
               }
             },
+            "transformation": {
+              "type": "object",
+              "description": "Configuration for document and metadata transformation (e.g., auto-narrativization) prior to chunking.",
+              "required": [
+                "strategy"
+              ],
+              "properties": {
+                "strategy": {
+                  "type": "string",
+                  "enum": [
+                    "mustache",
+                    "json-to-text",
+                    "none"
+                  ],
+                  "description": "The technique used to transform metadata fields and variables into a semantic, human-readable text payload."
+                },
+                "template": {
+                  "type": "string",
+                  "description": "Mustache or standard text template mapping schema/metadata variables into a text payload."
+                }
+              }
+            },
             "chunking": {
               "type": "object",
               "required": [

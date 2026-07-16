@@ -21,6 +21,9 @@
         "tikaEnabled": true,
         "ocrEnabled": false
       },
+      "transformation": {
+        "strategy": "none"
+      },
       "chunking": {
         "strategy": "token-split",
         "maxTokens": 500,

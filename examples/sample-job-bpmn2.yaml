@@ -36,6 +36,17 @@ spec:
     textExtraction:
       tikaEnabled: false
       ocrEnabled: false
+    transformation:
+      strategy: mustache
+      template: |
+        Process Instance: {{bpmn:processInstanceId}}
+        Process Key: {{bpmn:processDefinitionKey}}
+        Status: {{bpmn:status}}
+        Started: {{bpmn:startDate}}
+        Variables:
+        {{#bpmn:variables}}
+        - Key: {{key}}, Value: {{value}}
+        {{/bpmn:variables}}
     chunking:
       strategy: token-split
       maxTokens: 500

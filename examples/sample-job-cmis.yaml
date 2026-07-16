@@ -35,6 +35,15 @@ spec:
     textExtraction:
       tikaEnabled: true
       ocrEnabled: true
+    transformation:
+      strategy: mustache
+      template: |
+        Document Name: {{cmis:name}}
+        Created By: {{cmis:createdBy}}
+        Creation Date: {{cmis:creationDate}}
+        Version: {{cmis:versionLabel}}
+        ---
+        {{content.text}}
     chunking:
       strategy: token-split
       maxTokens: 1000

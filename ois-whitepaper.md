@@ -14,6 +14,10 @@ The **Open Ingestion Standard (OIS)** is a platform-agnostic specification, comm
 
 This white paper details the design requirements, architectural foundations, schemas, and reference implementations of OIS.
 
+### Conformance & Terminology
+
+The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "SHOULD NOT", "RECOMMENDED", "MAY", and "OPTIONAL" in this document are to be interpreted as described in RFC 2119.
+
 ---
 
 ## 1. The Enterprise Ingestion Crisis
@@ -30,7 +34,7 @@ graph TD
 Traditional search engines maintained strict document-level security. In modern AI architectures, files are processed, chunked, and embedded into vector databases. If the original security identifiers (Active Directory SIDs, OAuth groups, local roles) are discarded during chunking, the vector store becomes a security hazard. Any user querying the LLM can inadvertently retrieve chunks of proprietary files (e.g., payroll records, patent drafts) that they are not authorized to view.
 
 ### Challenge 2: Vendor Lock-in
-Enterprise pipelines are typically built using vendor-specific ingestion tools. If an organization decides to transition from one vector database provider to another, or from a cloud embedding API to local models, they must rewrite their entire ingestion code. There is no standard format to represent either the document payloads or the crawling job configurations.
+Enterprise pipelines are typically built using vendor-specific ingestion tools. If an organization decides to transition from one vector database provider to another, or from a cloud embedding API to local models, they are forced to rewrite their entire ingestion code. There is no standard format to represent either the document payloads or the crawling job configurations.
 
 ### Challenge 3: Monolithic Scaling Constraints
 Processing large binary documents (e.g., multi-hundred page PDF manuals) requires significant CPU resources for text extraction and GPU resources for vector embeddings. If these phases are tightly coupled inside a single process, the ingestion engine degrades. Large files block the pipeline, leading to backpressure and service outages.
@@ -58,24 +62,24 @@ mindmap
 ```
 
 ### Pillar 1: Zero-Trust Ingestion
-Document security must be treated as a first-class citizen. Compliance requires:
-* **Identity Preservation:** Access Control Lists (ACLs) containing Windows SIDs, oauth groups, or email roles must be parsed at the source and mapped directly to the document metadata envelope.
-* **Synchronized Access Enforcement:** Downstream search queries must execute filtering against these ingested security properties to ensure that users only retrieve chunks they are explicitly permitted to read.
+Document security MUST be treated as a first-class citizen. Compliance requires:
+* **Identity Preservation:** Access Control Lists (ACLs) containing Windows SIDs, oauth groups, or email roles MUST be parsed at the source and mapped directly to the document metadata envelope.
+* **Synchronized Access Enforcement:** Downstream search queries MUST execute filtering against these ingested security properties to ensure that users only retrieve chunks they are explicitly permitted to read.
 
 ### Pillar 2: Vendor-Neutral Interoperability
 By decoupling the source connector from the target vector writer, OIS ensures absolute flexibility:
-* **Standard Exchange Formats:** All extracted data must be encapsulated in a schema-compliant JSON structure.
-* **Declarative Pipeline Configuration:** Crawlers, schedules, transformations/narrativizations, chunking strategies, and embedding models must be configured using standard, platform-agnostic JSON/YAML descriptors.
+* **Standard Exchange Formats:** All extracted data MUST be encapsulated in a schema-compliant JSON structure.
+* **Declarative Pipeline Configuration:** Crawlers, schedules, transformations/narrativizations, chunking strategies, and embedding models MUST be configured using standard, platform-agnostic JSON/YAML descriptors.
 
 ### Pillar 3: Event-Driven Decoupling
-To achieve horizontal scaling, OIS pipelines must isolate tasks:
-* **Asynchronous Message Broker:** Document ingestion must be broken down into discrete steps (Scan $\to$ Extract $\to$ Transform $\to$ Chunk $\to$ Embed $\to$ Index) managed by an event broker (e.g., Apache Kafka).
-* **Claim Check Pattern:** Standard queue messages must be lightweight. Large binary files are stored in a temporary shared repository (e.g., S3, local filesystem check), and the queue message carries a URI reference (the *claim check*) to prevent broker saturation.
+To achieve horizontal scaling, OIS pipelines MUST isolate tasks:
+* **Asynchronous Message Broker:** Document ingestion MUST be broken down into discrete steps (Scan $\to$ Extract $\to$ Transform $\to$ Chunk $\to$ Embed $\to$ Index) managed by an event broker (e.g., Apache Kafka).
+* **Claim Check Pattern:** Standard queue messages MUST be lightweight. Large binary files are stored in a temporary shared repository (e.g., S3, local filesystem check), and the queue message carries a URI reference (the *claim check*) to prevent broker saturation.
 
 ### Pillar 4: Incremental Efficiency
 To protect enterprise source systems from resource exhaustion:
-* **Stateful Delta Crawls:** Connectors must track incremental cursors, only publishing documents that have been modified, created, or deleted.
-* **Dynamic Backpressure:** Subsystems must adjust consumption rates to match downstream indexing and embedding throughput.
+* **Stateful Delta Crawls:** Connectors MUST track incremental cursors, only publishing documents that have been modified, created, or deleted.
+* **Dynamic Backpressure:** Subsystems MUST adjust consumption rates to match downstream indexing and embedding throughput.
 
 ---
 

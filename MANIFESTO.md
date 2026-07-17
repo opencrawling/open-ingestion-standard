@@ -21,27 +21,31 @@ Data ingestion and secure routing are the backbone of modern search, analytics, 
 
 This Manifesto defines the core values and architectural principles required to build an open, secure, and vendor-neutral ecosystem for enterprise data ingestion.
 
+### Conformance & Terminology
+
+The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "SHOULD NOT", "RECOMMENDED", "MAY", and "OPTIONAL" in this document are to be interpreted as described in RFC 2119.
+
 ---
 
 ## 🏛️ The Core Principles
 
-All compliant implementations of the **Open Ingestion Standard (OIS)** must adhere to the following four principles:
+All compliant implementations of the **Open Ingestion Standard (OIS)** MUST adhere to the following four principles:
 
 ### 1. Zero-Trust Ingestion (Security First)
-* **Identity Preservation**: Document security permissions (Access Control Lists, User SIDs, and Group Identifiers) must be extracted alongside content and treated as first-class metadata.
-* **Synchronized Access Enforcement**: Vector search engines and AI orchestrators must ingest security metadata dynamically, ensuring that user queries return only the information they are explicitly authorized to read at the source.
+* **Identity Preservation**: Document security permissions (Access Control Lists, User SIDs, and Group Identifiers) MUST be extracted alongside content and treated as first-class metadata.
+* **Synchronized Access Enforcement**: Vector search engines and AI orchestrators MUST ingest security metadata dynamically, ensuring that user queries return only the information they are explicitly authorized to read at the source.
 
 ### 2. Vendor-Neutral Interoperability (Data Portability)
-* **Standard Exchange Formats**: Document streams and metadata extracted from diverse source repositories (SharePoint, Amazon S3, databases, file shares, CMIS repositories, and BPMN 2.0 workflow engines) must be formatted using a uniform, vendor-neutral structure.
-* **Declarative Pipeline Configuration**: Ingestion configurations, crawling schedules, connector profiles, and mapping tables must be represented using platform-agnostic, version-controlled formats (JSON/YAML).
+* **Standard Exchange Formats**: Document streams and metadata extracted from diverse source repositories (SharePoint, Amazon S3, databases, file shares, CMIS repositories, and BPMN 2.0 workflow engines) MUST be formatted using a uniform, vendor-neutral structure.
+* **Declarative Pipeline Configuration**: Ingestion configurations, crawling schedules, connector profiles, and mapping tables MUST be represented using platform-agnostic, version-controlled formats (JSON/YAML).
 
 ### 3. Event-Driven Decoupling (Decoupled Scalability)
-* **Decoupled Architecture**: Pipelines must be partitioned into independent, horizontally scalable workers (Scanners, Parsers, Embedders, and Writers) connected via asynchronous message queues.
-* **Claim Check Pattern**: Bulky binary payloads must be separated from the primary message broker. Queue messages must carry lightweight reference claims, pulling binary files from shared storage only when needed for parsing.
+* **Decoupled Architecture**: Pipelines MUST be partitioned into independent, horizontally scalable workers (Scanners, Parsers, Embedders, and Writers) connected via asynchronous message queues.
+* **Claim Check Pattern**: Bulky binary payloads MUST be separated from the primary message broker. Queue messages MUST carry lightweight reference claims, pulling binary files from shared storage only when needed for parsing.
 
 ### 4. Incremental Efficiency (Resource Protection)
-* **Incremental Scans**: Ingestion systems must use stateful, cursor-based scans to discover changes, avoiding full-crawl resource spikes on source repositories.
-* **Rate-Limiting & Backpressure**: Pipeline components must dynamically adapt ingestion rates to prevent service degradation in source repositories or destination vector databases.
+* **Incremental Scans**: Ingestion systems MUST use stateful, cursor-based scans to discover changes, avoiding full-crawl resource spikes on source repositories.
+* **Rate-Limiting & Backpressure**: Pipeline components MUST dynamically adapt ingestion rates to prevent service degradation in source repositories or destination vector databases.
 
 ---
 

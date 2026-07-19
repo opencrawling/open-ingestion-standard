@@ -117,7 +117,7 @@ The Technical Committee will begin its work using the following initial contribu
    * `document.schema.json` - Schema for secure document payloads with Active Directory SIDs, CMIS, and BPMN 2.0 properties.
    * `job.schema.json` - Schema for declarative crawler jobs.
 4. **Validation Examples** ([examples/](examples/)): CMIS and BPMN 2.0 payload mapping samples.
-5. **OpenCrawling Reference Implementation Codebase** ([OpenCrawling Codebase](../opencrawling-in-org)): The open source reference implementation containing the runtime, connectors, and Secure MCP Server demonstrating compliant ingestion, embedding, and security-filtered context retrieval.
+5. **OpenCrawling Reference Implementation Codebase** ([OpenCrawling Codebase](https://github.com/opencrawling/opencrawling)): The open source reference implementation containing the runtime, connectors, and Secure MCP Server demonstrating compliant ingestion, embedding, and security-filtered context retrieval.
 
 ***
 

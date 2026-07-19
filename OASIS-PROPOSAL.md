@@ -35,7 +35,7 @@ The Technical Committee will focus on the specification of schemas, protocols, a
 5. **CMIS and BPMN 2.0 Standard Mappings:** Formalizing extensions to map CMIS metadata (`cmis:*`) and BPMN 2.0 process variable/active task states (`bpmn:*`) to support real-time context indexing in enterprise search and RAG.
 
 #### Out-of-Scope Work:
-1. Creating or maintaining specific connector implementations or target database writers (which are left to external open source implementations, such as the [OpenCrawling Codebase](../opencrawling-in-org) project).
+1. Creating or maintaining specific connector implementations or target database writers (which are left to external open source implementations, such as the [OpenCrawling Codebase](https://github.com/opencrawling/opencrawling) project).
 2. Standardizing vector database internal algorithms or distance metrics.
 3. Standardizing LLM model weights, training datasets, or prompt engineering languages.
 

@@ -78,9 +78,15 @@ The Technical Committee will conduct its business and draft all deliverables in 
 
 ### (a) Identification of Proposers (Initial Sponsors)
 The following eligible OASIS members propose the formation of the OIS Technical Committee:
-1. **Piergiorgio Lucidi** (piergiorgio@apache.org), OpenCrawling Project Lead, Member at The ASF and Apache ManifoldCF PMC Chair.
-2. *[Partner Organization Representative]* - Representing Document Management & CMIS Connector ecosystems.
-3. *[Partner Organization Representative]* - Representing Vector Database & AI Ingestion ecosystems.
+1. **Piergiorgio Lucidi** (piergiorgio@apache.org), OpenCrawling Project Founder, Lead Architect, Member at The ASF and Apache ManifoldCF PMC Chair.
+2. **Michael Cizmar**
+(michael@michaelcizmar.com), OpenCrawling
+Lead Architect
+3. **Luis Cabaceira**
+(luis.cabaceira@texter.ai), OpenCrawling
+Lead Architect, Core Developer
+4. *[Partner Organization Representative]* - Representing Document Management & CMIS Connector ecosystems.
+5. *[Partner Organization Representative]* - Representing Vector Database & AI Ingestion ecosystems.
 
 ***
 

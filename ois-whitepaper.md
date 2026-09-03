@@ -78,7 +78,7 @@ To achieve horizontal scaling, OIS pipelines MUST isolate tasks:
 
 ### Pillar 4: Incremental Efficiency
 To protect enterprise source systems from resource exhaustion:
-* **Stateful Delta Crawls:** Connectors MUST track incremental cursors, only publishing documents that have been modified, created, or deleted.
+* **Stateful Delta Crawls & Tombstoning:** Connectors MUST track incremental cursors, publishing document creation/updates (`action: "UPSERT"`) or deletion tombstones (`action: "DELETE"`).
 * **Dynamic Backpressure:** Subsystems MUST adjust consumption rates to match downstream indexing and embedding throughput.
 
 ---
@@ -88,7 +88,7 @@ To protect enterprise source systems from resource exhaustion:
 OIS formalizes two primary JSON schemas:
 
 ### A. Document Payload Schema
-The `document.schema.json` dictates how document text, metadata, and security settings are wrapped for transport.
+The `document.schema.json` dictates how document text, metadata, lifecycle action (`UPSERT` / `DELETE`), and security settings are wrapped for transport.
 
 ```json
 {
@@ -96,9 +96,14 @@ The `document.schema.json` dictates how document text, metadata, and security se
   "$id": "https://opencrawling.org/schemas/ois-document-schema.json",
   "title": "OIS Document Payload Schema",
   "type": "object",
-  "required": ["id", "source", "content", "metadata", "security"],
+  "required": ["id", "source"],
   "properties": {
     "id": { "type": "string" },
+    "action": {
+      "type": "string",
+      "enum": ["UPSERT", "DELETE"],
+      "default": "UPSERT"
+    },
     "source": {
       "type": "object",
       "required": ["type", "instance"],

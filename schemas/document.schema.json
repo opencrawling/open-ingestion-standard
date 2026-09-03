@@ -7,15 +7,21 @@
   "type": "object",
   "required": [
     "id",
-    "source",
-    "content",
-    "metadata",
-    "security"
+    "source"
   ],
   "properties": {
     "id": {
       "type": "string",
       "description": "Unique identifier of the document in the target index."
+    },
+    "action": {
+      "type": "string",
+      "enum": [
+        "UPSERT",
+        "DELETE"
+      ],
+      "default": "UPSERT",
+      "description": "Lifecycle operation to perform on the target document index (UPSERT for creation/updates or DELETE for tombstones)."
     },
     "source": {
       "type": "object",
@@ -257,5 +263,32 @@
         }
       }
     }
+  },
+  "if": {
+    "properties": {
+      "action": {
+        "const": "DELETE"
+      }
+    },
+    "required": [
+      "action"
+    ]
+  },
+  "then": {
+    "properties": {
+      "content": {
+        "type": "object"
+      },
+      "security": {
+        "type": "object"
+      }
+    }
+  },
+  "else": {
+    "required": [
+      "content",
+      "metadata",
+      "security"
+    ]
   }
 }

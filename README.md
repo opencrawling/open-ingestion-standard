@@ -41,6 +41,7 @@ OIS defines:
   * **`job.schema.json`**: Schema validation rules for job configurations.
 * **`examples/`**: Payload examples.
   * **`sample-document.json`**: Complete OIS document payload showing nested ACL SIDs.
+  * **`sample-document-delete.json`**: OIS document tombstone payload (`action: "DELETE"`).
   * **`sample-job.json`**: Complete OIS job configuration file (JSON format).
   * **`sample-job.yaml`**: Complete OIS job configuration file (YAML format).
 * **`spec/`**: In-depth markdown documentation covering claim check, ACL translation, and error schemas.

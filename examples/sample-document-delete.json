@@ -1,0 +1,14 @@
+{
+  "id": "https://example.com/docs/deprecated-policy",
+  "action": "DELETE",
+  "source": {
+    "type": "stormcrawler",
+    "instance": "https://example.com",
+    "connectorVersion": "1.0.0"
+  },
+  "metadata": {
+    "stormcrawler.status": "DELETED",
+    "http.status": "404",
+    "deletedAt": "2026-09-03T12:00:00Z"
+  }
+}

@@ -1,133 +1,202 @@
-# Proposal for the OASIS Open Ingestion Standard (OIS) Technical Committee 🌐
+# Proposal for the OASIS Open Ingestion Standard (OIS) Technical Committee
 
-## 1. Charter of the Proposed Technical Committee
+## Section 1: TC Charter
 
-### (a) Proposed Name of the Technical Committee
-**OASIS Open Ingestion Standard (OIS) Technical Committee**
-
-***
-
-### (b) Statement of Purpose
-The purpose of the Open Ingestion Standard (OIS) Technical Committee is to define, govern, and stabilize a secure, decoupled, and vendor-neutral specification for enterprise data ingestion into downstream search engines, vector databases, and Large Language Model (LLM) Retrieval-Augmented Generation (RAG) architectures.
-
-#### Background and Problem Statement
-In modern enterprise AI architectures, the bottleneck has shifted from model intelligence to data logistics. Extracting structured and unstructured information from enterprise repositories (such as SharePoint, Amazon S3, relational databases, CMIS-compliant repositories, and BPMN 2.0 workflow engines) and routing it to vector databases remains a highly brittle, insecure, and vendor-locked endeavor. 
-
-Three main issues persist:
-1. **The security gap (ACL leaks):** Standard vector ingestion pipelines omit source document security permissions (Access Control Lists, active directory SIDs, or OAuth roles). Chunks of documents are embedded into vector databases without access restrictions, leading to leakage of restricted info.
-2. **Vendor lock-in:** Ingestion jobs are configured using proprietary formats. There is no standard format to represent either document payloads or crawl configurations.
-3. **Monolithic scaling bottlenecks:** Coupling document scanning, text extraction, embedding generation, and indexing in a single process degrades pipeline resilience under heavy workloads.
-
-To address these issues and prove the viability of the standard in real-world environments, the **OpenCrawling** open-source project was published in July 2026 as the official reference implementation of the Open Ingestion Standard. OpenCrawling demonstrates a decoupled runtime leveraging Spring AI and the Model Context Protocol (MCP) to enforce Zero-Trust context retrieval and server-side ACL security filtering.
-
-The OIS Technical Committee will standardize schemas and protocols that build on these concepts, ensuring that document security metadata is preserved from source to index, schemas are open and extensible, and pipelines can scale via decoupled architectures (e.g. using the Claim Check pattern).
-
-***
-
-### (c) Scope of Work
-The Technical Committee will focus on the specification of schemas, protocols, and architectural guidelines that define the lifecycle of data ingestion for enterprise search and RAG platforms.
-
-#### In-Scope Technical Work:
-1. **Unified Document Payload Schema:** Standardizing the JSON Schema to represent extracted document text, extensible metadata envelopes, and security structures.
-2. **Zero-Trust Security Preservation:** Preserving document permissions and mapping source identities (e.g. Active Directory Windows SIDs, OAuth groups, CMIS users/groups, BPMN assignees/candidates) directly to the document metadata envelope.
-3. **Unified Job Configuration Schema:** A platform-agnostic configuration schema (JSON/YAML) declaring crawler connectors, scheduling execution, text extraction features (Tika, OCR), metadata transformations/narrativizations, chunking strategies, embedding provider endpoints, and output vector targets.
-4. **Decoupled Architecture & Claim Check Protocol:** Specifying standard mechanisms for asynchronous message brokers (e.g. Apache Kafka) to exchange metadata envelopes while delegating large binary contents to temporary storage using the Claim Check pattern.
-5. **CMIS and BPMN 2.0 Standard Mappings:** Formalizing extensions to map CMIS metadata (`cmis:*`) and BPMN 2.0 process variable/active task states (`bpmn:*`) to support real-time context indexing in enterprise search and RAG.
-
-#### Out-of-Scope Work:
-1. Creating or maintaining specific connector implementations or target database writers (which are left to external open source implementations, such as the [OpenCrawling Codebase](https://github.com/opencrawling/opencrawling) project).
-2. Standardizing vector database internal algorithms or distance metrics.
-3. Standardizing LLM model weights, training datasets, or prompt engineering languages.
-
-***
-
-### (d) Proposed Deliverables
-The Technical Committee intends to produce the following deliverables:
-1. **OIS Document Payload Specification (Version 1.0):** Standardizing JSON Schema, including mappings for active directory security permissions, CMIS metadata, and BPMN 2.0 variables/activities.
-2. **OIS Job Configuration Specification (Version 1.0):** Standardizing YAML/JSON configuration schemas for crawler pipelines, chunking, and routing.
-3. **OIS Architecture and Integration Guide (White Paper):** Formalizing recommendation practices for the Claim Check pattern, stateful delta crawls, and server-side ACL filter execution.
-
-#### Proposed Schedule:
-* **Month 1-3:** Charter approval and initial organization. Ingestion of the initial contribution from the OpenCrawling project.
-* **Month 4-6:** RFC process for OIS Document Schema modifications and draft publication.
-* **Month 7-9:** Public Review Drafts of the Document Payload and Job Configuration specifications.
-* **Month 10-12:** Committee Specification approval and Submission for OASIS Standard status.
-
-***
-
-### (e) Intellectual Property Rights (IPR) Mode
-The Technical Committee will operate under the **Non-Assertion Mode** as defined in the OASIS Intellectual Property Rights (IPR) Policy.
-
-***
-
-### (f) Anticipated Audience / Users
-The deliverables are targeted towards:
-* **Enterprise Software Architects & Security Officers** designing secure RAG/LLM applications.
-* **Vector Database and Enterprise Search Providers** looking to support secure context filtering.
-* **Connector Ingestion Platforms** (e.g., Apache ManifoldCF, LangChain, LlamaIndex) seeking a standard payload schema.
-* **Enterprise Content Management (ECM) & Business Process Management (BPM) Vendors** wishing to index process states and repository content natively into vector databases.
-
-***
-
-### (g) Language
-The Technical Committee will conduct its business and draft all deliverables in **English**.
+### 1.a. TC Name
+OASIS Open Ingestion Standard (OIS) Technical Committee
+Short name / TC Abbreviation: OIS TC
 
 ---
 
-## 2. Non-Charter Information
+### 1.b. Statement of Purpose
+The purpose of the Open Ingestion Standard (OIS) Technical Committee is to define, govern and standardize an open, secure, decoupled and vendor-neutral specification for enterprise data ingestion into downstream search engines, vector databases and Large Language Model (LLM) Retrieval-Augmented Generation (RAG) architectures.
 
-### (a) Identification of Proposers (Initial Sponsors)
-The following eligible OASIS members propose the formation of the OIS Technical Committee:
-1. **Piergiorgio Lucidi** (piergiorgio@apache.org), OpenCrawling Project Founder, Lead Architect, Member at The ASF and Apache ManifoldCF PMC Chair.
-2. **Michael Cizmar**
-(michael@michaelcizmar.com), OpenCrawling
-Lead Architect
-3. **Luis Cabaceira**
-(luis.cabaceira@texter.ai), OpenCrawling
-Lead Architect, Core Developer
-4. *[Partner Organization Representative]* - Representing Document Management & CMIS Connector ecosystems.
-5. *[Partner Organization Representative]* - Representing Vector Database & AI Ingestion ecosystems.
+#### Background and Problem Statement
+In modern enterprise AI architectures, the primary operational bottleneck has shifted from model intelligence to data logistics and zero-trust security preservation. Extracting structured and unstructured information from enterprise repositories (such as Microsoft SharePoint, Amazon S3, relational databases, CMIS-compliant repositories and BPMN 2.0 workflow engines) and routing it to vector stores and AI agents remains brittle, insecure and locked into proprietary formats.
 
-***
+Three persistent challenges exist across enterprise ingestion pipelines:
+1. The Security Gap and ACL Leaks: Standard vector ingestion pipelines routinely discard source document access permissions (Access Control Lists, Windows Active Directory SIDs or OAuth scopes). Chunks of documents are vectorized and indexed without permission boundaries, exposing restricted enterprise knowledge to unauthorized users during LLM retrieval and agentic tool execution.
+2. Proprietary Ingestion Schemas and Vendor Lock-In: Ingestion pipelines and crawler jobs rely on bespoke, non-interoperable configurations. There is no open standard representation for document payloads, identity mappings or crawl job declarations, forcing organizations to build proprietary connectors for each vector target.
+3. Monolithic Scaling Bottlenecks: Tight coupling of repository scanning, text extraction, embedding generation and vector indexing creates brittle architectures that fail under enterprise workloads and cannot scale independently.
 
-### (b) Proposed TC Convener
-**Piergiorgio Lucidi** (piergiorgio@apache.org), OpenCrawling Initiative.
+The OIS Technical Committee will standardize schemas and protocols that address these challenges by guaranteeing that access control metadata is preserved from source to index, schemas are open and extensible and pipelines scale efficiently via decoupled asynchronous architectures (incorporating the Claim Check pattern).
 
-***
+---
 
-### (c) Proposed TC Chair(s)
-**Piergiorgio Lucidi** (piergiorgio@apache.org), OpenCrawling Initiative.
+### 1.c. Business Benefits
+The Open Ingestion Standard provides distinct, quantifiable benefits to multiple classes of enterprise stakeholders:
 
-***
+1. Enterprise Organizations and Security Leadership (CISOs, CIOs, Security Architects):
+   - Eliminates security breaches caused by AI access-control leaks. Preserving source repository ACLs into vector embeddings and agent context retrieval prevents data spillage, ensures zero-trust compliance and satisfies regulatory governance requirements (e.g., GDPR, HIPAA, SOC 2, ISO 27001).
+   - Reduces the cost and risk of enterprise AI initiatives by ensuring that existing security investments (such as Active Directory, LDAP and ECM permissions) are honored without manual re-engineering.
 
-### (d) Date and Time of First Meeting
-The first meeting of the TC is proposed to be held on **Wednesday, September 16, 2026, at 16:00 UTC** (conducted virtually).
+2. Enterprise Content Management (ECM) and Workflow/BPM Vendors:
+   - Eliminates the unsustainable development cost of building and maintaining custom vector ingestion connectors for every emerging vector database or LLM framework.
+   - A single, standardized OIS output payload allows ECM and BPM platforms to expose documents, metadata and workflow execution states natively to the entire AI ecosystem.
 
-***
+3. Vector Database and Enterprise Search Providers:
+   - Enables database engines to offer out-of-the-box, fine-grained pre- and post-filtering based on standardized security SIDs and claims, accelerating enterprise adoption without building source-specific connector stacks.
+   - Broadens market adoption by providing a universal ingestion interface for enterprise content sources.
 
-### (e) Meeting Schedule and Location / Platform
-The TC will meet bi-weekly on Wednesdays at 16:00 UTC using a virtual conferencing platform (Zoom/Microsoft Teams). Technical discussions, drafts, and issue tracking will take place on GitHub under a dedicated OASIS Open repository.
+4. Data Integration Frameworks and Open-Source Projects (ETL, Crawlers, AI Frameworks):
+   - Establishes an open interoperability contract that cleanly decouples repository scanning, text extraction, embedding calculation and index writing.
+   - Adopters can independently scale workers, adopt the Claim Check pattern to eliminate message queue bloat and reuse connectors across disparate platforms.
 
-***
+5. System Integrators and IT Adopters:
+   - Reduces integration complexity and time-to-market for enterprise GenAI deployments, preventing lock-in to proprietary ingestion pipelines and enabling seamless migration across cloud and on-premises environments.
 
-### (f) Proposers' Statements of Support
-Each proposer listed under 2(a) supports the creation of the OIS Technical Committee and intends to participate actively in its development.
+---
 
-***
+### 1.d. Scope
+The Technical Committee will focus on defining, maintaining and enhancing schemas, protocol specifications and architectural guidelines governing the lifecycle of data ingestion for enterprise search and RAG platforms.
 
-### (g) Initial Contributions
-The Technical Committee will begin its work using the following initial contributions donated by the OpenCrawling project:
-1. **Open Ingestion Standard Manifesto** ([MANIFESTO.md](MANIFESTO.md)): Values and principles of zero-trust ingestion.
-2. **OIS White Paper** ([ois-whitepaper.md](ois-whitepaper.md)): Detailed design guidelines and reference architectures.
-3. **OIS Schemas** ([schemas/](schemas/)):
-   * `document.schema.json` - Schema for secure document payloads with Active Directory SIDs, CMIS, and BPMN 2.0 properties.
-   * `job.schema.json` - Schema for declarative crawler jobs.
-4. **Validation Examples** ([examples/](examples/)): CMIS and BPMN 2.0 payload mapping samples.
-5. **OpenCrawling Reference Implementation Codebase** ([OpenCrawling Codebase](https://github.com/opencrawling/opencrawling)): The open source reference implementation containing the runtime, connectors, and Secure MCP Server demonstrating compliant ingestion, embedding, and security-filtered context retrieval.
+#### In-Scope Technical Work:
+1. Unified Document Payload Schema: Defining and maintaining a standardized JSON Schema representing extracted text, structured and unstructured metadata envelopes, content hash identifiers, document lifecycle states (including deletion tombstones) and security structures.
+2. Zero-Trust Security Preservation: Specifying schema mechanisms for preserving source repository permissions and mapping source identity descriptors (e.g., Active Directory Windows SIDs, OAuth claims, CMIS ACLs, BPMN process assignees/candidates) directly into document metadata envelopes for downstream enforcement.
+3. Unified Job Configuration Schema: Standardizing a platform-agnostic configuration schema (JSON/YAML) declaring crawler connectors, scheduling execution, extraction options, metadata transformations, chunking parameters, embedding provider endpoints and target destination writers.
+4. Decoupled Architecture and Claim Check Protocol: Specifying standard mechanisms for asynchronous message brokers (e.g., Apache Kafka) to exchange metadata envelopes while delegating large binary payloads to external object storage using the Claim Check architectural pattern.
+5. CMIS and BPMN 2.0 Standard Mappings: Formalizing normative extensions mapping OASIS CMIS metadata (`cmis:*`) and BPMN 2.0 process variables and active task states (`bpmn:*`) to support real-time context indexing in enterprise search and RAG.
 
-***
+#### Out-of-Scope Technical Work:
+1. Implementing, maintaining, or certifying specific crawler runtimes, connector implementations, or vector database writers (which are left to external implementations, such as the independent OpenCrawling open-source project).
+2. Standardizing vector database internal storage algorithms, indexing structures (e.g., HNSW, IVF), or vector distance metrics.
+3. Standardizing LLM model architectures, weights, training datasets, or prompt engineering syntax.
 
-### (h) Drafting and Communication Tools
-* **GitHub Repository:** For version control of schemas, specifications, issue tracking, and pull requests.
-* **Mailing List:** OASIS-hosted TC mailing list for official notices and discussions.
-* **Slack Workspace:** For informal community sync-ups and quick developer collaboration.
+---
+
+### 1.e. Deliverables
+The Technical Committee intends to produce the following deliverables:
+
+1. OIS Document Payload Specification (Version 1.0): An OASIS Committee Specification defining the JSON Schema for document payloads, including metadata envelopes, lifecycle actions and identity mappings for Active Directory, CMIS and BPMN 2.0.
+2. OIS Job Configuration Specification (Version 1.0): An OASIS Committee Specification defining the JSON/YAML configuration schema for crawler pipelines, chunking, embedding generation and routing.
+3. OIS Architecture and Integration Guide: An OASIS Committee Note / White Paper defining architectural recommendations, reference topologies for the Claim Check pattern, stateful delta crawling, deletion tombstones and search-time ACL filtering.
+
+#### Projected Schedule:
+- Months 1–3: TC formation, initial meeting, ingestion of initial contributions and establishment of drafting repository.
+- Months 4–6: Working drafts and RFC reviews for the Document Payload Schema and Job Configuration Schema.
+- Months 7–9: Publication of Committee Specification Drafts (CSD) and public review period.
+- Months 10–12: Committee Specification (CS) approval and preparation for submission as an OASIS Standard.
+
+---
+
+### 1.f. IPR Mode
+The Technical Committee will operate under the Non-Assertion Mode as defined in the OASIS Intellectual Property Rights (IPR) Policy.
+
+---
+
+### 1.g. Audience
+The deliverables are targeted towards:
+- Enterprise Software Architects, Security Engineers and Chief Information Security Officers (CISOs) designing secure enterprise RAG and LLM systems.
+- Vector Database and Enterprise Search Providers seeking standardized access control envelopes.
+- Ingestion, Crawler and Connector Framework Developers (e.g., Apache ManifoldCF, LangChain, LlamaIndex).
+- Enterprise Content Management (ECM) and Business Process Management (BPM) Platform Vendors wanting native AI indexing.
+- Data Integration Specialists and Platform Engineers building decoupled, high-throughput data pipelines.
+
+---
+
+### 1.h. Language
+The Technical Committee will conduct its business and draft all deliverables in English.
+
+---
+
+### References (for Section 1)
+- Open Ingestion Standard Manifesto:
+  https://github.com/opencrawling/open-ingestion-standard/blob/master/MANIFESTO.md
+- Open Ingestion Standard Architecture White Paper:
+  https://github.com/opencrawling/open-ingestion-standard/blob/master/ois-whitepaper.md
+- OIS Document Payload Schema:
+  https://github.com/opencrawling/open-ingestion-standard/blob/master/schemas/document.schema.json
+- OIS Job Configuration Schema:
+  https://github.com/opencrawling/open-ingestion-standard/blob/master/schemas/job.schema.json
+- OIS Payload Validation Examples:
+  https://github.com/opencrawling/open-ingestion-standard/tree/master/examples
+- OpenCrawling Reference Implementation Codebase:
+  https://github.com/opencrawling/opencrawling (An independent open-source reference implementation of the Open Ingestion Standard providing connector runtimes, Claim Check handling and secure context retrieval via Model Context Protocol).
+
+---
+
+## Section 2: Additional Information
+
+### 2.a. Identification of Similar Work
+The Technical Committee has identified the following related initiatives and established standards and distinguishes its scope and synergies as follows:
+
+1. OASIS Content Management Interoperability Services (CMIS) TC:
+   CMIS is an established OASIS Standard defining domain models and web service interfaces for enterprise content management (ECM) repositories. The OIS TC does not define repository access APIs; rather, it directly builds upon CMIS by standardizing how CMIS metadata properties (`cmis:*`) and repository ACLs are extracted, structured into JSON envelopes and delivered to AI and vector systems without losing access control semantics.
+
+2. OASIS Data Provenance Standard TC:
+   The Data Provenance Standard TC focuses on defining provenance, authenticity and usage-rights metadata for training data and AI-generated outputs. OIS operates at the data-in-motion logistics and runtime ingestion layer between source repositories and vector databases. OIS complements the Data Provenance Standard by enabling its metadata envelopes to be encapsulated and carried through the ingestion pipeline.
+
+3. Coalition for Secure AI (CoSAI):
+   CoSAI addresses overarching AI system security, Model Context Protocol (MCP) security and agentic design security patterns. OIS aligns directly with CoSAI by providing the data-tier standard that enforces Zero-Trust ACL preservation during document ingestion, ensuring that downstream AI agents and MCP tools enforce strict source-system authorization.
+
+4. OASIS eXtensible Access Control Markup Language (XACML) / ACAL TC:
+   XACML provides fine-grained attribute-based access control (ABAC) and authorization architectures. OIS does not develop policy evaluation engines; instead, OIS standardizes how security metadata (Active Directory SIDs, OAuth tokens and CMIS permissions) is structured within document payloads, allowing downstream systems to evaluate permissions against XACML/ACAL policy enforcement and decision points (PEP/PDP).
+
+---
+
+### 2.b. First TC Meeting
+The first meeting of the TC is proposed to be held on Wednesday, January 13, 2027, at 16:00 UTC (virtual teleconference).
+[Alternative date: Wednesday, December 16, 2026, at 16:00 UTC, subject to the Call for Participation date].
+The meeting will be held virtually via teleconference.
+
+---
+
+### 2.c. Ongoing Meeting Schedule
+The TC will meet bi-weekly on Wednesdays at 16:00 UTC via teleconference. Meeting hosting will rotate among member organizations or be facilitated by the TC Convener.
+
+---
+
+### 2.d. TC Proposers
+The following eligible OASIS persons propose the formation of the OIS Technical Committee:
+
+1. Piergiorgio Lucidi, piergiorgio@apache.org, OpenCrawling / The Apache Software Foundation [OASIS Member / Organizational Member 1]
+2. Michael Cizmar, michael@michaelcizmar.com, MC+A [OASIS Member / Organizational Member 1 or 2]
+3. Luis Cabaceira, luis.cabaceira@texter.ai, Texter Technologies [OASIS Member / Organizational Member 2]
+4. [Proposer 4 Name], [Email Address], [OASIS Membership Affiliation / Organizational Member]
+5. [Proposer 5 Name], [Email Address], [OASIS Membership Affiliation / Organizational Member]
+
+---
+
+### 2.e. Primary Representatives' Support
+Statements of support from the Primary Representatives of the participating OASIS Organizational Members:
+
+- Statement of Support from Organizational Member 1:
+  "I, [Name of Primary Representative], [Email Address], as OASIS primary representative for [OASIS Organizational Member 1 Name], confirm our support for this proposed Charter and endorse our participant(s) listed above as named co-proposer(s)."
+
+- Statement of Support from Organizational Member 2:
+  "I, [Name of Primary Representative], [Email Address], as OASIS primary representative for [OASIS Organizational Member 2 Name], confirm our support for this proposed Charter and endorse our participant(s) listed above as named co-proposer(s)."
+
+---
+
+### 2.f. TC Convener
+Piergiorgio Lucidi, piergiorgio@apache.org, OpenCrawling Initiative.
+
+---
+
+### 2.g. Anticipated Contributions
+The Technical Committee will begin its work using the following initial specifications and schemas contributed by the Open Ingestion Standard initiative:
+
+1. Open Ingestion Standard Manifesto:
+   https://github.com/opencrawling/open-ingestion-standard/blob/master/MANIFESTO.md
+2. Open Ingestion Standard Architecture White Paper:
+   https://github.com/opencrawling/open-ingestion-standard/blob/master/ois-whitepaper.md
+3. OIS Document Payload Schema (JSON Schema):
+   https://github.com/opencrawling/open-ingestion-standard/blob/master/schemas/document.schema.json
+4. OIS Job Configuration Schema (JSON Schema):
+   https://github.com/opencrawling/open-ingestion-standard/blob/master/schemas/job.schema.json
+5. Payload Validation Examples (CMIS and BPMN 2.0 mapping samples):
+   https://github.com/opencrawling/open-ingestion-standard/tree/master/examples
+
+---
+
+### 2.h. FAQ Document
+A FAQ document will be prepared and published in conjunction with the proposal announcement and Call for Participation on the TC workspace.
+
+---
+
+### 2.i. Work Product Titles and Acronyms
+The Technical Committee expects to produce the following work products:
+
+1. Open Ingestion Standard (OIS) Document Payload Specification (OIS-Payload)
+2. Open Ingestion Standard (OIS) Job Configuration Specification (OIS-JobConfig)
+3. Open Ingestion Standard (OIS) Architecture and Integration Guide (OIS-ArchGuide)

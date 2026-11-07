@@ -22,13 +22,13 @@ An open specification, community manifesto, and schema standard for secure, deco
 
 ## 📖 Overview
 
-The **Open Ingestion Standard (OIS)** solves the challenge of moving data from enterprise source systems (such as SharePoint, S3 buckets, relational databases, CMIS repositories, and BPMN 2.0 workflow engines) to downstream vector stores, LLMs, and RAG architectures.
+The **Open Ingestion Standard (OIS)** solves the challenge of moving data from enterprise source systems (such as SharePoint, S3 buckets, relational databases, CMIS repositories, and BPMN 2.0 workflow engines) to downstream **Vector Databases / RAG architectures** AND **Cloud / Lakehouse Object Storage** (such as Apache Ozone and AWS S3).
 
 OIS defines:
-1. **[MANIFESTO.md](MANIFESTO.md)**: The architectural pillars of zero-trust security mapping, asynchronous claiming, and vendor-neutrality.
-2. **Unified Document Payload Schema**: A standard JSON schema to package extracted text, rich metadata, and source Access Control Lists (ACLs) containing Security SIDs.
-3. **Unified Job Configuration Schema**: A platform-agnostic configuration schema (YAML/JSON) to declare crawlers, schedule execution rates, and map search endpoints.
-4. **[ois-whitepaper.md](ois-whitepaper.md)**: Comprehensive architectural white paper detailing the enterprise ingestion crisis, pillars, schemas, and reference designs.
+1. **[MANIFESTO.md](MANIFESTO.md)**: The architectural pillars of zero-trust fail-closed security mapping, in-flight pre-embedding governance, asynchronous claim checks & persistent `.ois.json` sidecar envelopes, and vendor-neutrality.
+2. **Unified Document Payload & Sidecar Schema (`schemas/document.schema.json`)**: A standard JSON schema to package extracted text, `SHA-256` binary checksums, rich metadata (`cmis:*`, `bpmn:*`, `ois:provenance`, `ois:governance`), and Fail-Closed Security structures (ACLs + ReBAC relationship tuples) — usable both as an in-flight streaming message and as a persistent `<key>.ois.json` sidecar file in object storage.
+3. **Unified Job Configuration Schema (`schemas/job.schema.json`)**: A platform-agnostic configuration schema (YAML/JSON) to declare scheduled or agent-triggered (`AGENTIC` / `ON_DEMAND`) crawlers, pre-embedding PII governance gates, and vector or object-storage target writers.
+4. **[ois-whitepaper.md](ois-whitepaper.md)**: Comprehensive architectural white paper detailing the enterprise ingestion and migration crisis, core pillars, schemas, and reference designs.
 
 ---
 
@@ -36,15 +36,18 @@ OIS defines:
 
 * **`MANIFESTO.md`**: Core values and engineering principles.
 * **`ois-whitepaper.md`**: Comprehensive architectural white paper for OIS.
+* **`OASIS-PROPOSAL.md` / `OASIS-CHARTER.txt`**: Formal Technical Committee charter proposal for OASIS Open.
 * **`schemas/`**: Formal JSON Schema definitions.
-  * **`document.schema.json`**: Schema validation rules for data exchange payloads.
-  * **`job.schema.json`**: Schema validation rules for job configurations.
+  * **`document.schema.json`**: Schema validation rules for streaming document payloads and persistent `<key>.ois.json` sidecar envelopes.
+  * **`job.schema.json`**: Schema validation rules for scheduled, event-driven, and agent-triggered ingestion/migration job configurations.
 * **`examples/`**: Payload examples.
   * **`sample-document.json`**: Complete OIS document payload showing nested ACL SIDs.
+  * **`sample-document-cmis.json`**: OIS document payload with `cmis:*` repository properties and ACLs.
+  * **`sample-document-bpmn2.json`**: OIS document payload with `bpmn:*` process instance state and active task permissions.
+  * **`sample-document-sidecar-migration.json`**: Persistent `<key>.ois.json` cloud migration sidecar with `sha256` checksum, `ois:provenance` (`RFC 8693` delegated agent identity), `ois:governance` PII redaction record, and ReBAC `relationships`.
   * **`sample-document-delete.json`**: OIS document tombstone payload (`action: "DELETE"`).
-  * **`sample-job.json`**: Complete OIS job configuration file (JSON format).
-  * **`sample-job.yaml`**: Complete OIS job configuration file (YAML format).
-* **`spec/`**: In-depth markdown documentation covering claim check, ACL translation, and error schemas.
+  * **`sample-job.json` / `sample-job.yaml`**: Complete OIS scheduled job configuration file.
+  * **`sample-job-agentic-migration.json`**: Agent-triggered (`AGENTIC`) CMIS-to-Ozone migration job with four-eyes approval, pre-embedding PII redaction, and `.ois.json` sidecar output.
 
 ---
 

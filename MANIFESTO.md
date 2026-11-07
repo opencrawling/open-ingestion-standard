@@ -31,21 +31,23 @@ The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "S
 
 All compliant implementations of the **Open Ingestion Standard (OIS)** MUST adhere to the following four principles:
 
-### 1. Zero-Trust Ingestion (Security First)
-* **Identity Preservation**: Document security permissions (Access Control Lists, User SIDs, and Group Identifiers) MUST be extracted alongside content and treated as first-class metadata.
-* **Synchronized Access Enforcement**: Vector search engines and AI orchestrators MUST ingest security metadata dynamically, ensuring that user queries return only the information they are explicitly authorized to read at the source.
+### 1. Zero-Trust Ingestion & Migration (Security First)
+* **Identity & Relationship Preservation**: Document security permissions—including Access Control Lists (ACLs), User SIDs, Group Identifiers, and Relationship-Based Access Control (ReBAC) tuples—MUST be extracted alongside content and treated as first-class metadata.
+* **Normative Fail-Closed Enforcement**: Downstream search engines, object storage gateways, and AI orchestrators MUST enforce `FAIL_CLOSED` security semantics. A payload with an absent or empty permissions array MUST default to **Deny-All** (never public), explicit `deny` rules MUST override `read`/`write`, and effective access MUST evaluate as the intersection ($\cap$) of repository, folder, and document permissions.
+* **In-Flight Pre-Embedding Governance**: Sensitive entities (such as PII) SHOULD be evaluated and redacted in flight (`ALLOW`, `REDACT`, `DROP`) *before* irreversible vectorization or target persistence occurs.
+* **Delegated Multi-Agent Identity**: When autonomous AI agents trigger discovery, ingestion, or migration jobs on behalf of a human user, the pipeline MUST preserve delegated provenance (`on_behalf_of` / OAuth 2.0 RFC 8693 `act.sub`) and strictly bound access to the human principal's source permissions.
 
-### 2. Vendor-Neutral Interoperability (Data Portability)
-* **Standard Exchange Formats**: Document streams and metadata extracted from diverse source repositories (SharePoint, Amazon S3, databases, file shares, CMIS repositories, and BPMN 2.0 workflow engines) MUST be formatted using a uniform, vendor-neutral structure.
-* **Declarative Pipeline Configuration**: Ingestion configurations, crawling schedules, connector profiles, and mapping tables MUST be represented using platform-agnostic, version-controlled formats (JSON/YAML).
+### 2. Vendor-Neutral Interoperability (Data Portability & Cloud Migration)
+* **Standard Exchange & Sidecar Formats**: Document streams and metadata extracted from diverse source repositories (SharePoint, Amazon S3, databases, file shares, CMIS repositories, and BPMN 2.0 workflow engines) MUST be formatted using a uniform, vendor-neutral JSON structure—usable both as an in-flight event payload and as a persistent `<key>.ois.json` sidecar file stored alongside raw binaries in cloud/lakehouse object storage.
+* **Declarative Pipeline Configuration**: Scheduled, event-driven, and agent-triggered (`AGENTIC` / `ON_DEMAND`) jobs, governance gates, transformation templates, and target writers MUST be represented using platform-agnostic, version-controlled formats (JSON/YAML).
 
 ### 3. Event-Driven Decoupling (Decoupled Scalability)
-* **Decoupled Architecture**: Pipelines MUST be partitioned into independent, horizontally scalable workers (Scanners, Parsers, Embedders, and Writers) connected via asynchronous message queues.
-* **Claim Check Pattern**: Bulky binary payloads MUST be separated from the primary message broker. Queue messages MUST carry lightweight reference claims, pulling binary files from shared storage only when needed for parsing.
+* **Decoupled Architecture**: Pipelines MUST be partitioned into independent, horizontally scalable workers (Scanners, Parsers, Governance Gates, Embedders, and Vector/Object Writers) connected via asynchronous message queues.
+* **Claim Check & Persistent Sidecar Pattern**: Bulky binary payloads MUST be separated from the primary message broker. Queue messages MUST carry lightweight reference claims (`claimCheckUri`) and cryptographic checksums (`sha256`), while cloud/lakehouse migrations persist companion `<key>.ois.json` sidecars (`sidecarUri`) so AI agents and analytics engines can inspect metadata and enforce ACLs without re-crawling legacy sources.
 
-### 4. Incremental Efficiency (Resource Protection)
-* **Incremental Scans**: Ingestion systems MUST use stateful, cursor-based scans to discover changes, avoiding full-crawl resource spikes on source repositories.
-* **Rate-Limiting & Backpressure**: Pipeline components MUST dynamically adapt ingestion rates to prevent service degradation in source repositories or destination vector databases.
+### 4. Incremental & Real-Time Efficiency (Resource Protection)
+* **Incremental Scans & Real-Time Lifecycle Events**: Ingestion systems MUST use stateful, cursor-based delta scans or real-time workflow transition events (`bpmn:transitionEvent`) to publish updates (`UPSERT`) and immediate security revocations (`DELETE` tombstones).
+* **Rate-Limiting & Backpressure**: Pipeline components MUST dynamically adapt ingestion rates to prevent service degradation in source repositories or destination targets.
 
 ---
 

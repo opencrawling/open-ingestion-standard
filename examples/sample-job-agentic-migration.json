@@ -1,0 +1,80 @@
+{
+  "version": "ois/v1alpha1",
+  "metadata": {
+    "name": "agentic-cmis-to-ozone-ma-migration",
+    "owner": "enterprise-architecture-team"
+  },
+  "spec": {
+    "trigger": {
+      "mode": "AGENTIC",
+      "dryRun": false,
+      "idempotencyKey": "ma-q3-migration-2026-10-15-001",
+      "requiresApproval": true,
+      "delegatedIdentity": {
+        "onBehalfOf": "alice.martin@company.com",
+        "actorAgent": "spiffe://company.com/agent/migration-copilot",
+        "scopes": [
+          "ois:discover",
+          "ois:migrate:write"
+        ]
+      },
+      "scopeOverrides": {
+        "folderPaths": [
+          "/Sites/corporate-development/documentLibrary/Q3-MA"
+        ],
+        "mimeTypes": [
+          "application/pdf",
+          "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+        ],
+        "maxDocuments": 500
+      }
+    },
+    "connector": {
+      "type": "cmis-source",
+      "config": {
+        "atomPubUrl": "https://alfresco.company.com/alfresco/api/-default-/public/cmis/versions/1.1/atom",
+        "repositoryId": "-default-",
+        "authentication": {
+          "type": "oauth2-on-behalf-of",
+          "secretRef": "alfresco-oidc-client"
+        }
+      }
+    },
+    "pipeline": {
+      "textExtraction": {
+        "tikaEnabled": true,
+        "ocrEnabled": true
+      },
+      "governance": {
+        "enabled": true,
+        "defaultAction": "REDACT",
+        "failClosed": true,
+        "piiRedaction": {
+          "enabled": true,
+          "categories": [
+            "EMAIL",
+            "SSN",
+            "CREDIT_CARD",
+            "PHONE",
+            "IBAN"
+          ],
+          "replacementToken": "[REDACTED]"
+        }
+      },
+      "transformation": {
+        "strategy": "none"
+      }
+    },
+    "output": {
+      "type": "ozone",
+      "sidecarEnabled": true,
+      "verifySha256": true,
+      "config": {
+        "volume": "enterprise-lake",
+        "bucket": "ma-vault",
+        "keyPrefix": "q3/",
+        "connectionRef": "ozone-s3g-credentials"
+      }
+    }
+  }
+}

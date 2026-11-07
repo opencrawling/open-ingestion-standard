@@ -1,0 +1,75 @@
+{
+  "id": "doc-889120-cmis-ozone",
+  "action": "UPSERT",
+  "source": {
+    "type": "cmis",
+    "instance": "https://alfresco.company.com/alfresco/api/-default-/public/cmis/versions/1.1/atom",
+    "connectorVersion": "1.4.0"
+  },
+  "content": {
+    "mimeType": "application/pdf",
+    "text": "Q3 M&A Due Diligence Summary for Project Titan. Contact: [REDACTED]",
+    "claimCheckUri": "ofs://ozone-cluster/enterprise-lake/ma-vault/q3/project-titan.pdf",
+    "sidecarUri": "ofs://ozone-cluster/enterprise-lake/ma-vault/q3/project-titan.pdf.ois.json",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "sizeBytes": 2485910
+  },
+  "metadata": {
+    "title": "Project Titan - Q3 M&A Due Diligence",
+    "author": "Alice Martin",
+    "lastModified": "2026-10-15T14:22:00Z",
+    "cmis:objectId": "workspace://SpacesStore/889120-titan-dd",
+    "cmis:name": "project-titan.pdf",
+    "cmis:objectTypeId": "cmis:document",
+    "cmis:versionLabel": "2.0",
+    "cmis:isLatestVersion": true,
+    "ois:provenance": {
+      "jobId": "job-agentic-ma-migration-042",
+      "triggeredBy": "mcp-agent",
+      "onBehalfOf": "alice.martin@company.com",
+      "actorAgent": "spiffe://company.com/agent/migration-copilot",
+      "ingestedAt": "2026-10-15T14:25:11Z"
+    },
+    "ois:governance": {
+      "decision": "REDACT",
+      "redacted": true,
+      "redactionCategories": [
+        "EMAIL",
+        "PHONE",
+        "IBAN"
+      ],
+      "policyId": "eu-ai-act-pii-gate-v1",
+      "evaluatedAt": "2026-10-15T14:25:10Z"
+    }
+  },
+  "security": {
+    "evaluationPolicy": "FAIL_CLOSED",
+    "inheritanceEnabled": true,
+    "permissions": [
+      {
+        "identity": "GROUP_MA_DEAL_TEAM",
+        "identityType": "cmis-group",
+        "displayName": "M&A Deal Team",
+        "access": "read"
+      },
+      {
+        "identity": "GROUP_EXTERNAL_CONTRACTORS",
+        "identityType": "cmis-group",
+        "displayName": "External Contractors",
+        "access": "deny"
+      }
+    ],
+    "relationships": [
+      {
+        "user": "group:ma-deal-team#member",
+        "relation": "viewer",
+        "object": "document:doc-889120-cmis-ozone"
+      },
+      {
+        "user": "folder:q3-ma-vault",
+        "relation": "parent_folder",
+        "object": "document:doc-889120-cmis-ozone"
+      }
+    ]
+  }
+}

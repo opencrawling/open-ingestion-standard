@@ -63,6 +63,21 @@
           "type": "string",
           "format": "uri-reference",
           "description": "URI reference pointing to the raw binary file in shared storage."
+        },
+        "sidecarUri": {
+          "type": "string",
+          "format": "uri-reference",
+          "description": "URI reference pointing to the persistent <key>.ois.json sidecar envelope stored alongside the raw binary in cloud/lakehouse object storage (e.g. Apache Ozone, AWS S3)."
+        },
+        "sha256": {
+          "type": "string",
+          "pattern": "^[a-fA-F0-9]{64}$",
+          "description": "Hex-encoded SHA-256 cryptographic checksum of the raw binary payload, used for cloud migration integrity verification and deduplication."
+        },
+        "sizeBytes": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Size of the raw binary payload in bytes."
         }
       }
     },
@@ -212,6 +227,106 @@
               }
             }
           }
+        },
+        "bpmn:transitionEvent": {
+          "type": "object",
+          "description": "Real-time event-driven BPMN 2.0 lifecycle transition notification triggering immediate ACL mutation or tombstone revocation.",
+          "required": [
+            "eventType",
+            "timestamp"
+          ],
+          "properties": {
+            "eventType": {
+              "type": "string",
+              "enum": [
+                "PROCESS_STARTED",
+                "TASK_ASSIGNED",
+                "TASK_COMPLETED",
+                "ACL_UPDATED",
+                "PROCESS_COMPLETED",
+                "PROCESS_TERMINATED"
+              ],
+              "description": "The workflow lifecycle event that triggered the document or ACL state transition."
+            },
+            "timestamp": {
+              "type": "string",
+              "format": "date-time",
+              "description": "ISO 8601 timestamp when the workflow transition occurred."
+            },
+            "previousStatus": {
+              "type": "string",
+              "description": "Previous workflow or document lifecycle status prior to the transition."
+            },
+            "newStatus": {
+              "type": "string",
+              "description": "New workflow or document lifecycle status following the transition."
+            }
+          }
+        },
+        "ois:provenance": {
+          "type": "object",
+          "description": "Provenance and delegated multi-agent identity metadata (OAuth 2.0 Token Exchange RFC 8693) tracking who triggered the ingestion or migration operation.",
+          "properties": {
+            "jobId": {
+              "type": "string",
+              "description": "Identifier of the OIS job execution that produced this payload."
+            },
+            "triggeredBy": {
+              "type": "string",
+              "description": "Trigger mechanism (e.g. scheduler, webhook, mcp-agent, manual)."
+            },
+            "onBehalfOf": {
+              "type": "string",
+              "description": "Subject identifier (RFC 8693 'sub' / 'on_behalf_of') of the human user whose source permissions bounded the operation."
+            },
+            "actorAgent": {
+              "type": "string",
+              "description": "Actor identifier (RFC 8693 'act.sub') of the autonomous AI agent or service orchestrating the job on behalf of the human user."
+            },
+            "ingestedAt": {
+              "type": "string",
+              "format": "date-time",
+              "description": "ISO 8601 timestamp when the document envelope was generated."
+            }
+          }
+        },
+        "ois:governance": {
+          "type": "object",
+          "description": "In-flight pre-embedding governance and PII redaction audit record.",
+          "required": [
+            "decision"
+          ],
+          "properties": {
+            "decision": {
+              "type": "string",
+              "enum": [
+                "ALLOW",
+                "REDACT",
+                "DROP"
+              ],
+              "description": "Policy decision applied prior to chunking, embedding, or target storage."
+            },
+            "redacted": {
+              "type": "boolean",
+              "description": "Indicates whether sensitive entities (e.g. PII) were redacted from the extracted text before downstream routing."
+            },
+            "redactionCategories": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "Categories of sensitive data redacted (e.g. EMAIL, SSN, CREDIT_CARD, PHONE, IBAN)."
+            },
+            "policyId": {
+              "type": "string",
+              "description": "Identifier of the governance policy or webhook rule evaluated."
+            },
+            "evaluatedAt": {
+              "type": "string",
+              "format": "date-time",
+              "description": "ISO 8601 timestamp when governance evaluation completed."
+            }
+          }
         }
       },
       "additionalProperties": true
@@ -223,6 +338,14 @@
         "permissions"
       ],
       "properties": {
+        "evaluationPolicy": {
+          "type": "string",
+          "enum": [
+            "FAIL_CLOSED"
+          ],
+          "default": "FAIL_CLOSED",
+          "description": "Normative security evaluation policy. Compliant consumers MUST enforce FAIL_CLOSED semantics: an absent or empty permissions array defaults to deny-all (never public), explicit 'deny' entries override 'read'/'write', and effective access is the intersection of repository, folder, and document ACLs."
+        },
         "inheritanceEnabled": {
           "type": "boolean",
           "description": "Indicates whether the document inherits ACL settings from its folder structure."
@@ -257,6 +380,32 @@
                   "deny"
                 ],
                 "description": "Permission rule matching the security constraint."
+              }
+            }
+          }
+        },
+        "relationships": {
+          "type": "array",
+          "description": "Optional Relationship-Based Access Control (ReBAC / Zanzibar / OpenFGA) relationship tuples preserved alongside static ACLs.",
+          "items": {
+            "type": "object",
+            "required": [
+              "user",
+              "relation",
+              "object"
+            ],
+            "properties": {
+              "user": {
+                "type": "string",
+                "description": "Subject or user-set in ReBAC notation (e.g. user:alice@company.com, group:finance#member)."
+              },
+              "relation": {
+                "type": "string",
+                "description": "Relationship name (e.g. viewer, editor, owner, parent_folder)."
+              },
+              "object": {
+                "type": "string",
+                "description": "Target object identifier in ReBAC notation (e.g. document:doc-554032-sp, folder:q3-ma)."
               }
             }
           }

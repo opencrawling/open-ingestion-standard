@@ -38,15 +38,16 @@ timeline
 ## 🛠️ Phase 1: Specification Stabilization & Schema 1.0.0 (Short-Term)
 **Focus:** Finalize current schemas, validate core zero-trust security assumptions, and formalize the extension model.
 
-- [ ] **Release OIS 1.0.0-RC1 (Release Candidate)**
-  - Finalize core validation constraints in [document.schema.json](schemas/document.schema.json) and [job.schema.json](schemas/job.schema.json), establishing standard extensions for CMIS repositories and BPMN 2.0 workflow engines.
-  - Clarify the claim check lifecycle and requirements for temporary shared storage structures.
+- [x] **Release OIS 1.0.0-RC1 (Release Candidate)**
+  - Finalize core validation constraints in [document.schema.json](schemas/document.schema.json) and [job.schema.json](schemas/job.schema.json), establishing standard extensions for CMIS repositories, BPMN 2.0 workflow engines (including real-time `bpmn:transitionEvent` notifications), pre-embedding governance (`ois:governance`), and delegated multi-agent provenance (`ois:provenance`).
+  - Standardize the Claim Check lifecycle (`claimCheckUri`), cryptographic binary integrity (`sha256`), and the persistent `<key>.ois.json` Cloud/Lakehouse Sidecar format (`sidecarUri`).
+  - Formalize normative `FAIL_CLOSED` security evaluation semantics and Relationship-Based Access Control (`relationships` / ReBAC) tuple mappings.
 - [ ] **Initiate RFC (Request for Comments) Workflows**
   - Establish a formal RFC template and process for spec amendments.
-  - Publish **RFC-001 (Security Identity Mapping)**: Discuss representation standards for complex active directory nested groups, OAuth scopes, and hybrid cloud ACL matrices.
+  - Publish **RFC-001 (Security Identity & ReBAC Mapping)**: Discuss representation standards for Active Directory nested groups, OAuth 2.0 RFC 8693 delegated agent identities (`onBehalfOf` / `actorAgent`), and Zanzibar/OpenFGA relationship tuples.
 - [ ] **Public Schema Registries**
   - Host versioned JSON schema files at static, accessible endpoints for automated IDE/CI integrations.
-  - Set up automated schema testing using standard validator libraries in github workflows.
+  - Set up automated schema testing using standard validator libraries in GitHub workflows.
 
 ---
 
@@ -54,26 +55,26 @@ timeline
 **Focus:** Make it easy to adopt OIS by providing ready-to-use client libraries, validation tools, and tests.
 
 - [ ] **`ois-validator` CLI**
-  - Develop a lightweight, cross-platform CLI tool to quickly validate document payloads and configuration files against OIS schemas.
+  - Develop a lightweight, cross-platform CLI tool to quickly validate streaming document payloads, `<key>.ois.json` sidecar files, and job configuration files against OIS schemas.
 - [ ] **Standard SDK Libraries**
-  - **OIS Python SDK**: Target AI/ML developers creating RAG pipelines with packages for payload validation and metadata formatting.
-  - **OIS TypeScript SDK**: Support Node.js/web-based backend workflows.
-  - **OIS Go SDK**: Target high-performance systems and connector agents.
+  - **OIS Python SDK**: Target AI/ML developers creating RAG and Agentic Ingestion pipelines with packages for payload validation, governance redaction envelopes, and metadata formatting.
+  - **OIS TypeScript SDK**: Support Node.js/web-based backend and MCP agent workflows.
+  - **OIS Go SDK**: Target high-performance systems and cloud migration connector agents.
 - [ ] **Conformance Test Suite**
-  - Establish a standard set of mock payloads, complex ACL variations, and configuration files to certify that third-party connectors are OIS-compliant.
+  - Establish a standard set of mock payloads, Fail-Closed ACL & ReBAC variations, `.ois.json` sidecar integrity checks, and configuration files to certify that third-party connectors and runtimes are OIS-compliant.
 
 ---
 
 ## 🌐 Phase 3: Integration, Compatibility & Governance (Long-Term)
-**Focus:** Drive wide-scale industry adoption, integrate with existing systems, and establish vendor-neutral steering.
+**Focus:** Drive wide-scale industry adoption, integrate with existing systems, and establish vendor-neutral standardization under OASIS Open.
 
-- [ ] **Framework Core Integrations**
-  - Build community-supported loaders for popular AI orchestrators like **LlamaIndex**, **LangChain**, and **Haystack** to natively process OIS payloads.
-- [ ] **Connector Bridging**
-  - Partner with open-source ingestion platforms (such as Apache ManifoldCF) to write translation layers that convert legacy connector configurations into standardized OIS configuration schemas.
-- [ ] **Vendor-Neutral Governance**
-  - Form an OIS steering committee with representatives from enterprise search, connector vendors, and vector database developers.
-  - Transition the repository to an established open steering group (e.g. Linux Foundation, CNCF) to guarantee long-term vendor neutrality.
+- [ ] **Framework & Agentic Core Integrations**
+  - Build community-supported loaders and Model Context Protocol (MCP) tools for AI orchestrators like **Spring AI**, **LlamaIndex**, **LangChain**, and **Haystack** to natively process OIS payloads and query `<key>.ois.json` lakehouse sidecars under Zero-Trust ACL filtering.
+- [ ] **Connector & Cloud Migration Bridging**
+  - Partner with open-source ingestion platforms (such as Apache ManifoldCF) and distributed object stores (such as Apache Ozone) to support zero-loss ECM-to-Lakehouse migrations and standardized OIS job configurations.
+- [ ] **OASIS Open Standardization**
+  - Form the **OASIS Open Ingestion Standard (OIS) Technical Committee** with representatives from enterprise content management, cloud storage, connector vendors, and AI/vector database developers (see [OASIS-PROPOSAL.md](OASIS-PROPOSAL.md)).
+  - Advance OIS to a ratified OASIS Standard, collaborating with the **OASIS CMIS**, **OASIS CoSAI**, **OASIS Data Provenance**, and **OASIS XACML/ACAL** Technical Committees.
 
 ---
 

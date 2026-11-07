@@ -34,14 +34,103 @@
     "spec": {
       "type": "object",
       "required": [
-        "schedule",
         "connector",
         "output"
+      ],
+      "anyOf": [
+        { "required": ["schedule"] },
+        { "required": ["trigger"] }
       ],
       "properties": {
         "schedule": {
           "type": "string",
           "description": "Standard crontab schedule pattern indicating when to trigger the crawl job."
+        },
+        "trigger": {
+          "type": "object",
+          "description": "Execution trigger configuration for on-demand, agent-triggered (Agentic Ingestion / Migration), or event-driven job runs.",
+          "required": [
+            "mode"
+          ],
+          "properties": {
+            "mode": {
+              "type": "string",
+              "enum": [
+                "SCHEDULED",
+                "ON_DEMAND",
+                "AGENTIC",
+                "EVENT_DRIVEN"
+              ],
+              "description": "Execution trigger mode."
+            },
+            "dryRun": {
+              "type": "boolean",
+              "default": false,
+              "description": "When true, performs pre-crawl discovery and inspection without persisting chunks or migrating objects."
+            },
+            "idempotencyKey": {
+              "type": "string",
+              "description": "Client-supplied idempotency key to prevent duplicate job submissions."
+            },
+            "requiresApproval": {
+              "type": "boolean",
+              "default": false,
+              "description": "When true, places the job in PENDING_APPROVAL state requiring four-eyes administrative approval before execution."
+            },
+            "delegatedIdentity": {
+              "type": "object",
+              "description": "Delegated multi-agent identity context (OAuth 2.0 Token Exchange RFC 8693) bounding the job to the human user's source repository permissions.",
+              "required": [
+                "onBehalfOf"
+              ],
+              "properties": {
+                "onBehalfOf": {
+                  "type": "string",
+                  "description": "Subject identifier (RFC 8693 'sub' / 'on_behalf_of') of the human user."
+                },
+                "actorAgent": {
+                  "type": "string",
+                  "description": "Actor identifier (RFC 8693 'act.sub') of the autonomous AI agent triggering the job."
+                },
+                "scopes": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  },
+                  "description": "OAuth 2.0 scopes authorized for this delegated execution."
+                }
+              }
+            },
+            "scopeOverrides": {
+              "type": "object",
+              "description": "Scoped repository path, query, or MIME-type filters narrowing the job execution.",
+              "properties": {
+                "folderPaths": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  },
+                  "description": "Repository folder paths to include in the scoped scan."
+                },
+                "queryFilter": {
+                  "type": "string",
+                  "description": "Source-native query filter (e.g. CMIS SQL, SharePoint KQL, or S3 prefix)."
+                },
+                "mimeTypes": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  },
+                  "description": "Allowed RFC 2046 media types."
+                },
+                "maxDocuments": {
+                  "type": "integer",
+                  "minimum": 1,
+                  "description": "Maximum number of documents to process in this run."
+                }
+              }
+            }
+          }
         },
         "connector": {
           "type": "object",
@@ -69,6 +158,52 @@
               "properties": {
                 "tikaEnabled": { "type": "boolean" },
                 "ocrEnabled": { "type": "boolean" }
+              }
+            },
+            "governance": {
+              "type": "object",
+              "description": "In-flight pre-embedding governance and PII redaction gate executed prior to chunking/vectorization or object migration.",
+              "properties": {
+                "enabled": {
+                  "type": "boolean",
+                  "default": true
+                },
+                "defaultAction": {
+                  "type": "string",
+                  "enum": [
+                    "ALLOW",
+                    "REDACT",
+                    "DROP"
+                  ],
+                  "default": "REDACT",
+                  "description": "Policy action to take when sensitive entities are detected."
+                },
+                "failClosed": {
+                  "type": "boolean",
+                  "default": true,
+                  "description": "When true, halts document routing if the governance gate or external policy webhook is unreachable."
+                },
+                "piiRedaction": {
+                  "type": "object",
+                  "properties": {
+                    "enabled": { "type": "boolean" },
+                    "categories": {
+                      "type": "array",
+                      "items": { "type": "string" },
+                      "description": "Sensitive entity types to redact (e.g. EMAIL, SSN, CREDIT_CARD, PHONE, IBAN)."
+                    },
+                    "replacementToken": {
+                      "type": "string",
+                      "default": "[REDACTED]",
+                      "description": "Mask token substituted for redacted spans."
+                    }
+                  }
+                },
+                "webhookUrl": {
+                  "type": "string",
+                  "format": "uri-reference",
+                  "description": "Optional external policy engine webhook URL returning ALLOW, REDACT, or DROP."
+                }
               }
             },
             "transformation": {
@@ -144,11 +279,19 @@
           "properties": {
             "type": {
               "type": "string",
-              "description": "Identifier of the destination index writer connector class (e.g. pgvector, elasticsearch)."
+              "description": "Identifier of the destination writer connector class (e.g. pgvector, elasticsearch, milvus, ozone, s3)."
+            },
+            "sidecarEnabled": {
+              "type": "boolean",
+              "description": "When writing to cloud/lakehouse object storage targets (e.g. Apache Ozone, AWS S3), persist a companion <key>.ois.json sidecar envelope alongside each raw binary object."
+            },
+            "verifySha256": {
+              "type": "boolean",
+              "description": "When true, compute and verify SHA-256 cryptographic checksums across source extraction and target object persistence."
             },
             "config": {
               "type": "object",
-              "description": "Database targets, table schemas, dimension values, and vector indexing algorithms.",
+              "description": "Database targets, object storage buckets/volumes, table schemas, dimension values, and indexing options.",
               "additionalProperties": true
             }
           }

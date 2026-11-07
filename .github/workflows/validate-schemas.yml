@@ -25,22 +25,22 @@ jobs:
       - name: Run schema validations
         run: |
           python -c "
-          import json, yaml, jsonschema
+          import glob, json, yaml, jsonschema
           
-          # Validate Document Schema
           doc_schema = json.load(open('schemas/document.schema.json'))
-          doc_data = json.load(open('examples/sample-document.json'))
-          jsonschema.validate(doc_data, doc_schema)
-          print('Document payload validated successfully!')
+          for doc_path in sorted(glob.glob('examples/sample-document*.json')):
+              doc_data = json.load(open(doc_path))
+              jsonschema.validate(doc_data, doc_schema)
+              print(f'Validated document payload: {doc_path}')
           
-          # Validate Job Schema against sample-job.json
           job_schema = json.load(open('schemas/job.schema.json'))
-          job_json_data = json.load(open('examples/sample-job.json'))
-          jsonschema.validate(job_json_data, job_schema)
-          print('JSON Job payload validated successfully!')
+          for job_path in sorted(glob.glob('examples/sample-job*.json')):
+              job_data = json.load(open(job_path))
+              jsonschema.validate(job_data, job_schema)
+              print(f'Validated JSON job payload: {job_path}')
           
-          # Validate Job Schema against sample-job.yaml
-          job_yaml_data = yaml.safe_load(open('examples/sample-job.yaml'))
-          jsonschema.validate(job_yaml_data, job_schema)
-          print('YAML Job payload validated successfully!')
+          for job_yaml_path in sorted(glob.glob('examples/sample-job*.yaml')):
+              job_yaml_data = yaml.safe_load(open(job_yaml_path))
+              jsonschema.validate(job_yaml_data, job_schema)
+              print(f'Validated YAML job payload: {job_yaml_path}')
           "

@@ -9,67 +9,67 @@ Short name / TC Abbreviation: OIS TC
 ---
 
 ### 1.b. Statement of Purpose
-The purpose of the Open Ingestion Standard (OIS) Technical Committee is to define, govern and standardize an open, secure, decoupled and vendor-neutral specification for enterprise data ingestion into downstream search engines, vector databases and Large Language Model (LLM) Retrieval-Augmented Generation (RAG) architectures.
+The purpose of the Open Ingestion Standard (OIS) Technical Committee is to define, govern and standardize an open, secure, decoupled and vendor-neutral specification for enterprise data ingestion and cloud content migration into downstream search engines, vector databases, cloud/lakehouse object storage and Large Language Model (LLM) Retrieval-Augmented Generation (RAG) and Multi-Agent architectures.
 
 #### Background and Problem Statement
-In modern enterprise AI architectures, the primary operational bottleneck has shifted from model intelligence to data logistics and zero-trust security preservation. Extracting structured and unstructured information from enterprise repositories (such as Microsoft SharePoint, Amazon S3, relational databases, CMIS-compliant repositories and BPMN 2.0 workflow engines) and routing it to vector stores and AI agents remains brittle, insecure and locked into proprietary formats.
+In modern enterprise AI and cloud lakehouse architectures, the primary operational bottleneck has shifted from model intelligence to governed data logistics and zero-trust security preservation. Extracting structured and unstructured information from enterprise repositories (such as Microsoft SharePoint, Amazon S3, relational databases, CMIS-compliant repositories and BPMN 2.0 workflow engines) and routing it to vector stores, cloud object stores (such as Apache Ozone and Amazon S3) and autonomous AI agents remains brittle, insecure and locked into proprietary formats.
 
-Three persistent challenges exist across enterprise ingestion pipelines:
-1. The Security Gap and ACL Leaks: Standard vector ingestion pipelines routinely discard source document access permissions (Access Control Lists, Windows Active Directory SIDs or OAuth scopes). Chunks of documents are vectorized and indexed without permission boundaries, exposing restricted enterprise knowledge to unauthorized users during LLM retrieval and agentic tool execution.
-2. Proprietary Ingestion Schemas and Vendor Lock-In: Ingestion pipelines and crawler jobs rely on bespoke, non-interoperable configurations. There is no open standard representation for document payloads, identity mappings or crawl job declarations, forcing organizations to build proprietary connectors for each vector target.
-3. Monolithic Scaling Bottlenecks: Tight coupling of repository scanning, text extraction, embedding generation and vector indexing creates brittle architectures that fail under enterprise workloads and cannot scale independently.
+Three persistent challenges exist across enterprise ingestion and migration pipelines:
+1. The Security Gap, ACL Leaks and Unredacted PII: Standard vector ingestion and cloud migration pipelines routinely discard source document access permissions (Access Control Lists, Windows Active Directory SIDs, OAuth scopes or Relationship-Based Access Control tuples) and embed raw text without in-flight governance. Chunks of documents are vectorized or migrated without Fail-Closed permission boundaries or pre-embedding PII redaction, exposing restricted enterprise knowledge to unauthorized users during LLM retrieval and multi-agent tool execution.
+2. Proprietary Ingestion/Migration Schemas and Vendor Lock-In: Ingestion pipelines, legacy-to-cloud content migrations and crawler jobs rely on bespoke, non-interoperable configurations. There is no open standard representation for streaming document payloads, persistent object-storage metadata sidecars (`<key>.ois.json`), identity mappings or scheduled and agent-triggered job declarations, forcing organizations to build proprietary connectors for each target platform.
+3. Monolithic Scaling Bottlenecks and Ungoverned Agentic Orchestration: Tight coupling of repository scanning, text extraction, governance filtering, embedding generation and target writing creates brittle architectures that fail under enterprise workloads, while autonomous AI agents lack a standardized, identity-bounded contract to discover repositories and trigger scoped ingestion or migration jobs on behalf of human users.
 
-The OIS Technical Committee will standardize schemas and protocols that address these challenges by guaranteeing that access control metadata is preserved from source to index, schemas are open and extensible and pipelines scale efficiently via decoupled asynchronous architectures (incorporating the Claim Check pattern).
+The OIS Technical Committee will standardize schemas and protocols that address these challenges by guaranteeing that Fail-Closed access control and pre-embedding governance metadata are preserved from source to index or object store, schemas are open and extensible (both in flight and as persistent `<key>.ois.json` sidecar envelopes) and pipelines scale efficiently via decoupled asynchronous architectures (incorporating the Claim Check pattern and delegated multi-agent provenance).
 
 ---
 
 ### 1.c. Business Benefits
 The Open Ingestion Standard provides distinct, quantifiable benefits to multiple classes of enterprise stakeholders:
 
-1. Enterprise Organizations and Security Leadership (CISOs, CIOs, Security Architects):
-   - Eliminates security breaches caused by AI access-control leaks. Preserving source repository ACLs into vector embeddings and agent context retrieval prevents data spillage, ensures zero-trust compliance and satisfies regulatory governance requirements (e.g., GDPR, HIPAA, SOC 2, ISO 27001).
-   - Reduces the cost and risk of enterprise AI initiatives by ensuring that existing security investments (such as Active Directory, LDAP and ECM permissions) are honored without manual re-engineering.
+1. Enterprise Organizations and Security/Data Leadership (CISOs, CIOs, CDOs, Security Architects):
+   - Eliminates security breaches caused by AI access-control leaks and unredacted embeddings. Preserving source repository ACLs and ReBAC tuples under normative Fail-Closed semantics, enforcing pre-embedding PII redaction (`ALLOW`, `REDACT`, `DROP`) and tracking delegated multi-agent identity (`OAuth 2.0 RFC 8693`) prevents data spillage and satisfies regulatory governance requirements (e.g., EU AI Act, DORA, GDPR, HIPAA, SOC 2, ISO 27001).
+   - Enables a "Migrate Now, AI Later" strategy for legacy ECM decommissioning: organizations can migrate documents to cloud/lakehouse object storage alongside standardized `<key>.ois.json` sidecar files with cryptographic `SHA-256` verification, preserving 100% of source metadata and ACLs for future AI and analytics workloads.
 
 2. Enterprise Content Management (ECM) and Workflow/BPM Vendors:
-   - Eliminates the unsustainable development cost of building and maintaining custom vector ingestion connectors for every emerging vector database or LLM framework.
-   - A single, standardized OIS output payload allows ECM and BPM platforms to expose documents, metadata and workflow execution states natively to the entire AI ecosystem.
+   - Eliminates the unsustainable development cost of building and maintaining custom ingestion and migration connectors for every emerging vector database, cloud object store or LLM framework.
+   - A single, standardized OIS output payload allows ECM and BPM platforms to expose documents, metadata and real-time workflow execution transitions natively to the entire AI and lakehouse ecosystem.
 
-3. Vector Database and Enterprise Search Providers:
-   - Enables database engines to offer out-of-the-box, fine-grained pre- and post-filtering based on standardized security SIDs and claims, accelerating enterprise adoption without building source-specific connector stacks.
-   - Broadens market adoption by providing a universal ingestion interface for enterprise content sources.
+3. Vector Database, Enterprise Search and Cloud Object Storage Providers:
+   - Enables vector databases, search engines and distributed object stores (e.g., Apache Ozone, S3-compatible lakehouses) to offer out-of-the-box, fine-grained pre- and post-filtering based on standardized security SIDs, ReBAC tuples and `.ois.json` sidecars without building source-specific connector stacks.
+   - Broadens market adoption by providing a universal ingestion and sidecar interface for enterprise content sources.
 
-4. Data Integration Frameworks and Open-Source Projects (ETL, Crawlers, AI Frameworks):
-   - Establishes an open interoperability contract that cleanly decouples repository scanning, text extraction, embedding calculation and index writing.
-   - Adopters can independently scale workers, adopt the Claim Check pattern to eliminate message queue bloat and reuse connectors across disparate platforms.
+4. Data Integration Frameworks and Open-Source Projects (ETL, Crawlers, AI & Agent Frameworks):
+   - Establishes an open interoperability contract that cleanly decouples repository scanning, text extraction, pre-embedding governance, embedding calculation and vector or object persistence.
+   - Adopters can independently scale workers, adopt the Claim Check and Sidecar patterns to eliminate message queue bloat and allow autonomous agents to trigger scoped, auditable jobs across disparate platforms.
 
 5. System Integrators and IT Adopters:
-   - Reduces integration complexity and time-to-market for enterprise GenAI deployments, preventing lock-in to proprietary ingestion pipelines and enabling seamless migration across cloud and on-premises environments.
+   - Reduces integration complexity and time-to-market for enterprise GenAI and cloud migration deployments, preventing lock-in to proprietary pipelines and enabling seamless portability across cloud and on-premises environments.
 
 ---
 
 ### 1.d. Scope
-The Technical Committee will focus on defining, maintaining and enhancing schemas, protocol specifications and architectural guidelines governing the lifecycle of data ingestion for enterprise search and RAG platforms.
+The Technical Committee will focus on defining, maintaining and enhancing schemas, protocol specifications and architectural guidelines governing the lifecycle of data ingestion and content migration for enterprise search, cloud object storage, RAG and multi-agent platforms.
 
 #### In-Scope Technical Work:
-1. Unified Document Payload Schema: Defining and maintaining a standardized JSON Schema representing extracted text, structured and unstructured metadata envelopes, content hash identifiers, document lifecycle states (including deletion tombstones) and security structures.
-2. Zero-Trust Security Preservation: Specifying schema mechanisms for preserving source repository permissions and mapping source identity descriptors (e.g., Active Directory Windows SIDs, OAuth claims, CMIS ACLs, BPMN process assignees/candidates) directly into document metadata envelopes for downstream enforcement.
-3. Unified Job Configuration Schema: Standardizing a platform-agnostic configuration schema (JSON/YAML) declaring crawler connectors, scheduling execution, extraction options, metadata transformations, chunking parameters, embedding provider endpoints and target destination writers.
-4. Decoupled Architecture and Claim Check Protocol: Specifying standard mechanisms for asynchronous message brokers (e.g., Apache Kafka) to exchange metadata envelopes while delegating large binary payloads to external object storage using the Claim Check architectural pattern.
-5. CMIS and BPMN 2.0 Standard Mappings: Formalizing normative extensions mapping OASIS CMIS metadata (`cmis:*`) and BPMN 2.0 process variables and active task states (`bpmn:*`) to support real-time context indexing in enterprise search and RAG.
+1. Unified Document Payload and Persistent Sidecar Schema: Defining and maintaining a standardized JSON Schema (`document.schema.json`) representing extracted text, cryptographic binary checksums (`sha256`), structured and unstructured metadata envelopes (including provenance and governance audit records), document lifecycle states (including `UPSERT` and `DELETE` tombstones) and security structures—applicable both as an in-flight streaming message and as a persistent `<key>.ois.json` sidecar file stored alongside raw binaries in object storage.
+2. Zero-Trust Fail-Closed Security, ReBAC and Delegated Agent Identity: Specifying normative `FAIL_CLOSED` security evaluation semantics (where absent or empty permission blocks default to deny-all, explicit `deny` overrides `read`/`write` and effective access is the intersection of repository, folder and document permissions), mapping source identity descriptors (e.g., Active Directory Windows SIDs, OAuth claims, CMIS ACLs, BPMN process assignees/candidates) and Relationship-Based Access Control (ReBAC / Zanzibar / OpenFGA) tuples, and recording delegated multi-agent identity (`onBehalfOf` and `actorAgent` per OAuth 2.0 Token Exchange RFC 8693).
+3. Unified Job Configuration, Agentic Triggers and Pre-Embedding Governance Schema: Standardizing a platform-agnostic configuration schema (`job.schema.json` in JSON/YAML) declaring crawler connectors, scheduled cron execution, event-driven or autonomous agent-triggered (`AGENTIC` / `ON_DEMAND`) execution modes (including dry-run pre-crawl discovery, scoped path/query overrides, idempotency keys and optional four-eyes approval states), in-flight pre-embedding PII governance gates (`ALLOW`, `REDACT`, `DROP`), metadata transformations, chunking parameters, embedding provider endpoints and vector or object-storage target writers.
+4. Decoupled Architecture, Claim Check Protocol and Cloud Sidecar Convention: Specifying standard mechanisms for asynchronous message brokers (e.g., Apache Kafka) to exchange lightweight metadata envelopes (`claimCheckUri`) while delegating large binary payloads to shared storage, as well as standardizing the persistent `<key>.ois.json` sidecar convention (`sidecarUri`) in cloud/lakehouse object storage so AI agents can query and filter metadata under Zero-Trust ACLs without downloading raw binaries.
+5. CMIS and BPMN 2.0 Standard Mappings and Real-Time Transition Events: Formalizing normative extensions mapping OASIS CMIS metadata (`cmis:*`) and BPMN 2.0 process variables, active task states (`bpmn:*`) and event-driven workflow transition notifications (`bpmn:transitionEvent`) to support real-time context indexing and immediate ACL mutation or tombstone revocation.
 
 #### Out-of-Scope Technical Work:
-1. Implementing, maintaining, or certifying specific crawler runtimes, connector implementations, or vector database writers (which are left to external implementations, such as the independent OpenCrawling open-source project).
-2. Standardizing vector database internal storage algorithms, indexing structures (e.g., HNSW, IVF), or vector distance metrics.
-3. Standardizing LLM model architectures, weights, training datasets, or prompt engineering syntax.
+1. Implementing, maintaining, or certifying specific crawler runtimes, connector implementations, MCP agent servers, or vector/object database writers (which are left to external implementations, such as the independent OpenCrawling open-source project).
+2. Standardizing vector database internal storage algorithms, indexing structures (e.g., HNSW, IVF), vector distance metrics, or internal ReBAC evaluation engine mechanics.
+3. Standardizing LLM model architectures, weights, training datasets, proprietary PII detection algorithms, or prompt engineering syntax.
 
 ---
 
 ### 1.e. Deliverables
 The Technical Committee intends to produce the following deliverables:
 
-1. OIS Document Payload Specification (Version 1.0): An OASIS Committee Specification defining the JSON Schema for document payloads, including metadata envelopes, lifecycle actions and identity mappings for Active Directory, CMIS and BPMN 2.0.
-2. OIS Job Configuration Specification (Version 1.0): An OASIS Committee Specification defining the JSON/YAML configuration schema for crawler pipelines, chunking, embedding generation and routing.
-3. OIS Architecture and Integration Guide: An OASIS Committee Note / White Paper defining architectural recommendations, reference topologies for the Claim Check pattern, stateful delta crawling, deletion tombstones and search-time ACL filtering.
+1. OIS Document Payload and Sidecar Specification (Version 1.0): An OASIS Committee Specification defining the JSON Schema for streaming document payloads and persistent `<key>.ois.json` sidecar envelopes, including `SHA-256` binary integrity, `ois:provenance` and `ois:governance` metadata, lifecycle actions (`UPSERT`/`DELETE`), normative `FAIL_CLOSED` security semantics, ReBAC relationship tuples and identity mappings for Active Directory, CMIS and BPMN 2.0.
+2. OIS Job Configuration Specification (Version 1.0): An OASIS Committee Specification defining the JSON/YAML configuration schema for scheduled, event-driven and agent-triggered (`AGENTIC`) crawler and migration pipelines, pre-embedding PII governance gates, transformation, chunking, embedding generation and vector or object-storage routing.
+3. OIS Architecture and Integration Guide: An OASIS Committee Note / White Paper defining architectural recommendations, reference topologies for the Claim Check and Persistent Sidecar (`<key>.ois.json`) patterns, stateful delta crawling, real-time BPMN transition events, deletion tombstones, delegated multi-agent identity (`RFC 8693`) and Fail-Closed search-time ACL/ReBAC filtering.
 
 #### Projected Schedule:
 - Months 1–3: TC formation, initial meeting, ingestion of initial contributions and establishment of drafting repository.
@@ -121,16 +121,16 @@ The Technical Committee will conduct its business and draft all deliverables in 
 The Technical Committee has identified the following related initiatives and established standards and distinguishes its scope and synergies as follows:
 
 1. OASIS Content Management Interoperability Services (CMIS) TC:
-   CMIS is an established OASIS Standard defining domain models and web service interfaces for enterprise content management (ECM) repositories. The OIS TC does not define repository access APIs; rather, it directly builds upon CMIS by standardizing how CMIS metadata properties (`cmis:*`) and repository ACLs are extracted, structured into JSON envelopes and delivered to AI and vector systems without losing access control semantics.
+   CMIS is an established OASIS Standard defining domain models and web service interfaces for enterprise content management (ECM) repositories. The OIS TC does not define repository access APIs; rather, it directly builds upon CMIS by standardizing how CMIS metadata properties (`cmis:*`) and repository ACLs are extracted, structured into JSON envelopes and delivered either to AI/vector systems or to cloud/lakehouse object storage as persistent `<key>.ois.json` sidecar files without losing access control semantics.
 
 2. OASIS Data Provenance Standard TC:
-   The Data Provenance Standard TC focuses on defining provenance, authenticity and usage-rights metadata for training data and AI-generated outputs. OIS operates at the data-in-motion logistics and runtime ingestion layer between source repositories and vector databases. OIS complements the Data Provenance Standard by enabling its metadata envelopes to be encapsulated and carried through the ingestion pipeline.
+   The Data Provenance Standard TC focuses on defining provenance, authenticity and usage-rights metadata for training data and AI-generated outputs. OIS operates at the data-in-motion logistics, cloud migration and runtime ingestion layer between source repositories, object stores and vector databases. OIS complements the Data Provenance Standard by carrying provenance envelopes (`ois:provenance`, including OAuth 2.0 RFC 8693 delegated agent identity `onBehalfOf` / `actorAgent`) and cryptographic binary checksums (`sha256`) through the ingestion and migration pipeline.
 
 3. Coalition for Secure AI (CoSAI):
-   CoSAI addresses overarching AI system security, Model Context Protocol (MCP) security and agentic design security patterns. OIS aligns directly with CoSAI by providing the data-tier standard that enforces Zero-Trust ACL preservation during document ingestion, ensuring that downstream AI agents and MCP tools enforce strict source-system authorization.
+   CoSAI addresses overarching AI system security, Model Context Protocol (MCP) security and agentic design security patterns. OIS aligns directly with CoSAI by providing the data-tier standard that enforces normative `FAIL_CLOSED` ACL/ReBAC preservation, in-flight pre-embedding PII governance (`ois:governance`) and delegated identity boundaries (`RFC 8693`) when autonomous agents discover repositories, query `.ois.json` sidecars or trigger ingestion jobs via MCP tools.
 
 4. OASIS eXtensible Access Control Markup Language (XACML) / ACAL TC:
-   XACML provides fine-grained attribute-based access control (ABAC) and authorization architectures. OIS does not develop policy evaluation engines; instead, OIS standardizes how security metadata (Active Directory SIDs, OAuth tokens and CMIS permissions) is structured within document payloads, allowing downstream systems to evaluate permissions against XACML/ACAL policy enforcement and decision points (PEP/PDP).
+   XACML provides fine-grained attribute-based access control (ABAC) and authorization architectures. OIS does not develop policy evaluation engines; instead, OIS standardizes how security metadata (Active Directory SIDs, OAuth tokens, CMIS permissions and ReBAC relationship tuples) is structured within document payloads and `.ois.json` sidecars under `FAIL_CLOSED` rules, allowing downstream systems to evaluate permissions against XACML/ACAL or ReBAC policy enforcement and decision points (PEP/PDP).
 
 ---
 

@@ -26,7 +26,7 @@ The **Open Ingestion Standard (OIS)** solves the challenge of moving data from e
 
 OIS defines:
 1. **[MANIFESTO.md](MANIFESTO.md)**: The architectural pillars of zero-trust fail-closed security mapping, in-flight pre-embedding governance, asynchronous claim checks & persistent `.ois.json` sidecar envelopes, open lakehouse tables, and vendor-neutrality.
-2. **Unified Document Payload & Sidecar Schema (`schemas/document.schema.json`)**: A standard JSON schema to package extracted text, `SHA-256` binary checksums, rich metadata (`cmis:*`, `bpmn:*`, `ois:provenance`, `ois:governance`), and Fail-Closed Security structures (ACLs + ReBAC relationship tuples) — usable as an in-flight streaming message, as a persistent `<key>.ois.json` sidecar file in object storage, and as structured records in open lakehouse tables (Apache Iceberg).
+2. **Unified Document Payload & Sidecar Schema (`schemas/document.schema.json`)**: A standard JSON schema to package extracted text, `SHA-256` binary checksums, rich metadata (`cmis:*`, `bpmn:*`, `ois:provenance`, `ois:governance`) supporting lossless multi-valued properties (`anyOf: [string, array of strings]`), and Fail-Closed Security structures (ACLs + ReBAC relationship tuples) — usable as an in-flight streaming message, as a persistent `<key>.ois.json` sidecar file in object storage, and as structured records in open lakehouse tables (Apache Iceberg).
 3. **Unified Job Configuration Schema (`schemas/job.schema.json`)**: A platform-agnostic configuration schema (YAML/JSON) to declare scheduled or agent-triggered (`AGENTIC` / `ON_DEMAND`) crawlers, pre-embedding PII governance gates, and vector, lakehouse table, or object-storage target writers.
 4. **[ois-whitepaper.md](ois-whitepaper.md)**: Comprehensive architectural white paper detailing the enterprise ingestion and migration crisis, core pillars, schemas, and reference designs.
 
@@ -35,6 +35,7 @@ OIS defines:
 ## 📂 Repository Structure
 
 * **`MANIFESTO.md`**: Core values and engineering principles.
+* **`ROADMAP.md`**: Strategic phases, milestones, RFCs, and SDK deliverables.
 * **`ois-whitepaper.md`**: Comprehensive architectural white paper for OIS.
 * **`OASIS-PROPOSAL.md` / `OASIS-CHARTER.txt`**: Formal Technical Committee charter proposal for OASIS Open.
 * **`schemas/`**: Formal JSON Schema definitions.
@@ -47,6 +48,8 @@ OIS defines:
   * **`sample-document-sidecar-migration.json`**: Persistent `<key>.ois.json` cloud migration sidecar with `sha256` checksum, `ois:provenance` (`RFC 8693` delegated agent identity), `ois:governance` PII redaction record, and ReBAC `relationships`.
   * **`sample-document-delete.json`**: OIS document tombstone payload (`action: "DELETE"`).
   * **`sample-job.json` / `sample-job.yaml`**: Complete OIS scheduled job configuration file.
+  * **`sample-job-cmis.json` / `sample-job-cmis.yaml`**: CMIS repository crawling job configuration.
+  * **`sample-job-bpmn2.json` / `sample-job-bpmn2.yaml`**: BPMN 2.0 workflow instance crawling job configuration.
   * **`sample-job-agentic-migration.json`**: Agent-triggered (`AGENTIC`) CMIS-to-Ozone migration job with four-eyes approval, pre-embedding PII redaction, and `.ois.json` sidecar output.
 
 ---
@@ -77,7 +80,7 @@ ajv validate -s schemas/job.schema.json -d examples/sample-job.json
 
 We welcome standard designers, platform developers, and enterprise search vendors to participate.
 1. Review the [MANIFESTO.md](MANIFESTO.md).
-2. Read the specifications in the `spec/` folder.
+2. Read the schema definitions in the `schemas/` folder.
 3. Open a **Request for Comments (RFC)** issue or submit a Pull Request to refine schemas.
 
 ---

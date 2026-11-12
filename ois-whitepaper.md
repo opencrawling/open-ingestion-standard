@@ -4,12 +4,12 @@
 ---
 
 ## Executive Summary
-As enterprises increasingly adopt Retrieval-Augmented Generation (RAG), Multi-Agent AI, and Cloud Lakehouse architectures, the bottleneck has shifted from model capability to **governed data logistics**. Extracting structured and unstructured information from legacy repository ecosystems—such as SharePoint, cloud storage buckets, databases, local file systems, CMIS repositories, and BPMN 2.0 workflow engines—and routing it to vector databases or cloud object stores (such as Apache Ozone and AWS S3) remains a highly brittle, insecure, and vendor-locked endeavor.
+As enterprises increasingly adopt Retrieval-Augmented Generation (RAG), Multi-Agent AI, and Cloud Lakehouse architectures, the bottleneck has shifted from model capability to **governed data logistics**. Extracting structured and unstructured information from enterprise repository ecosystems—such as SharePoint, cloud storage buckets, databases, local file systems, CMIS repositories, cloud ECM platforms (e.g. Hyland Content Innovation Cloud, Alfresco), BPMN 2.0 workflow engines, and streaming push protocols—and routing it to vector databases, cloud object stores (such as Apache Ozone and AWS S3), or open lakehouse table formats (such as Apache Iceberg) remains a critical architectural challenge.
 
 The **Open Ingestion Standard (OIS)** is a platform-agnostic specification, community manifesto, and schema standard designed to establish:
-1. **Zero-Trust Fail-Closed Security & ReBAC Preservation:** Propagating legacy system Access Control Lists (ACLs) and Relationship-Based Access Control (ReBAC) tuples directly to vector indexes and object stores under strict Fail-Closed semantics.
+1. **Zero-Trust Fail-Closed Security & ReBAC Preservation:** Propagating legacy system Access Control Lists (ACLs) and Relationship-Based Access Control (ReBAC) tuples directly to vector indexes, lakehouse tables, and object stores under strict Fail-Closed semantics.
 2. **In-Flight Pre-Embedding Governance:** Enforcing policy evaluation (`ALLOW`, `REDACT`, `DROP`) and PII redaction *before* irreversible vectorization or target storage occurs.
-3. **Vendor-Neutral Data Exchange & Cloud Sidecar Migration:** Standardizing how documents, cryptographic `SHA-256` checksums, metadata, and security payloads are formatted—both as in-flight streaming envelopes and as persistent `<key>.ois.json` sidecar files in cloud object storage ("Migrate Now, AI Later").
+3. **Vendor-Neutral Data Exchange, Cloud Sidecars & Open Lakehouse Tables:** Standardizing how documents, cryptographic `SHA-256` checksums, metadata, and security payloads are formatted—as in-flight streaming envelopes, as persistent `<key>.ois.json` sidecar files in cloud object storage ("Migrate Now, AI Later"), and as structured records in open lakehouse tables (Apache Iceberg).
 4. **Decoupled Event-Driven Scaling:** Leveraging asynchronous brokers and the Claim Check pattern to handle large-scale enterprise data streams.
 5. **Declarative & Agent-Triggered Pipeline Management:** Providing a unified schema to define scheduled, event-driven, or autonomous agent-triggered (`AGENTIC`) crawlers, governance gates, transformers/narrativizers, splitters, embedders, and writers with delegated human provenance (`OAuth 2.0 RFC 8693`).
 
@@ -246,10 +246,16 @@ When organizations decommission legacy ECM systems or consolidate content into d
 * **Agentic Migration & Sidecar Retrieval**: Autonomous AI agents can discover, filter, and inspect `.ois.json` sidecar envelopes under Zero-Trust ACL enforcement (`FAIL_CLOSED`) without downloading bulky raw binaries or re-crawling legacy sources.
 * **Delegated Provenance & Governance Audit**: Agent-triggered jobs (`trigger.mode: "AGENTIC"`) capture delegated human identity (`ois:provenance.onBehalfOf` and `actorAgent` per OAuth 2.0 RFC 8693) and pre-embedding PII redaction outcomes (`ois:governance`).
 
+#### 4. Open Lakehouse Table Architectures (Apache Iceberg)
+In addition to object sidecars, OIS maps structured document records, lineage, and Zero-Trust access control lists into open columnar lakehouse table formats managed by **Apache Iceberg** (and Apache Parquet):
+* **ACID Transactions & Snapshot Isolation**: Guarantees serializable commits for batch and streaming ingestion pipelines with built-in time-travel and partition pruning capabilities.
+* **Preserved Access Control Columns**: Ingested records carry explicit Zero-Trust permission columns (`allowed_principals`, `denied_principals`, `security_owner`) enabling downstream analytical engines (such as DuckDB, Trino, and Apache Spark) to enforce row-level access control without data duplication.
+* **Dynamic Schema Evolution**: Allows enterprise metadata and extracted document entities to dynamically evolve lakehouse schemas across ingestion runs.
+
 ---
 
 ## 4. Reference Implementation: OpenCrawling
-The open-source **OpenCrawling** platform serves as the reference implementation for OIS. It showcases how a decoupled, Java-based runtime can scale ingestion using Kafka, Spring AI, PostgreSQL, and Ollama.
+The open-source **OpenCrawling** platform serves as the reference implementation for OIS. It showcases how a decoupled, Java 25 runtime can scale ingestion using Kafka, Apache Tika 4 text extraction, in-flight Pre-Embedding Governance Gates, Spring AI embeddings, and multi-target persistence across vector databases (PostgreSQL/pgvector, Milvus, Qdrant, Vespa, Solr, OpenSearch), cloud migration sidecars (Apache Ozone, AWS S3), and open lakehouse tables (Apache Iceberg).
 
 ```
                   +--------------------------------+

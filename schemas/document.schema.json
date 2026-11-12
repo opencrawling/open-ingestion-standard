@@ -83,42 +83,80 @@
     },
     "metadata": {
       "type": "object",
-      "description": "Arbitrary key-value metadata map extracted from the source file, including standard CMIS repository properties and BPMN 2.0 workflow engine execution states.",
+      "description": "Arbitrary key-value metadata map extracted from the source file, including standard CMIS repository properties and BPMN 2.0 workflow engine execution states. A single-valued property is a scalar; a multi-valued property (for example a CMIS multi-valued property or a document with several authors) is an array of the same type.",
       "properties": {
-        "title": { "type": "string" },
-        "author": { "type": "string" },
-        "lastModified": { "type": "string", "format": "date-time" },
+        "title": {
+          "anyOf": [
+            { "type": "string" },
+            { "type": "array", "items": { "type": "string" } }
+          ]
+        },
+        "author": {
+          "anyOf": [
+            { "type": "string" },
+            { "type": "array", "items": { "type": "string" } }
+          ]
+        },
+        "lastModified": {
+          "anyOf": [
+            { "type": "string", "format": "date-time" },
+            { "type": "array", "items": { "type": "string", "format": "date-time" } }
+          ]
+        },
         "cmis:objectId": {
-          "type": "string",
+          "anyOf": [
+            { "type": "string" },
+            { "type": "array", "items": { "type": "string" } }
+          ],
           "description": "The unique identifier of the object in the CMIS repository."
         },
         "cmis:name": {
-          "type": "string",
+          "anyOf": [
+            { "type": "string" },
+            { "type": "array", "items": { "type": "string" } }
+          ],
           "description": "The name of the object in the CMIS repository."
         },
         "cmis:objectTypeId": {
-          "type": "string",
+          "anyOf": [
+            { "type": "string" },
+            { "type": "array", "items": { "type": "string" } }
+          ],
           "description": "The type of the CMIS object (e.g. cmis:document, cmis:folder)."
         },
         "cmis:createdBy": {
-          "type": "string",
+          "anyOf": [
+            { "type": "string" },
+            { "type": "array", "items": { "type": "string" } }
+          ],
           "description": "The user who created the CMIS object."
         },
         "cmis:creationDate": {
-          "type": "string",
-          "format": "date-time",
+          "anyOf": [
+            { "type": "string", "format": "date-time" },
+            { "type": "array", "items": { "type": "string", "format": "date-time" } }
+          ],
           "description": "The timestamp when the CMIS object was created."
         },
         "cmis:lastModifiedBy": {
-          "type": "string",
+          "anyOf": [
+            { "type": "string" },
+            { "type": "array", "items": { "type": "string" } }
+          ],
           "description": "The user who last modified the CMIS object."
         },
         "cmis:changeToken": {
-          "type": "string",
+          "anyOf": [
+            { "type": "string" },
+            { "type": "array", "items": { "type": "string" } }
+          ],
           "description": "The change token of the CMIS object."
         },
         "cmis:versionLabel": {
-          "type": "string",
+          "anyOf": [
+            { "type": "string" },
+            { "type": "array", "items": { "type": "string" } }
+          ],
           "description": "The version label of the CMIS document."
         },
         "cmis:isLatestVersion": {
@@ -126,23 +164,38 @@
           "description": "Indicates whether this is the latest version of the CMIS document."
         },
         "bpmn:processInstanceId": {
-          "type": "string",
+          "anyOf": [
+            { "type": "string" },
+            { "type": "array", "items": { "type": "string" } }
+          ],
           "description": "The unique identifier of the workflow process instance."
         },
         "bpmn:processDefinitionId": {
-          "type": "string",
+          "anyOf": [
+            { "type": "string" },
+            { "type": "array", "items": { "type": "string" } }
+          ],
           "description": "The unique identifier of the BPMN 2.0 process definition."
         },
         "bpmn:processDefinitionKey": {
-          "type": "string",
+          "anyOf": [
+            { "type": "string" },
+            { "type": "array", "items": { "type": "string" } }
+          ],
           "description": "The business key/identifier of the BPMN 2.0 process definition."
         },
         "bpmn:processDefinitionName": {
-          "type": "string",
+          "anyOf": [
+            { "type": "string" },
+            { "type": "array", "items": { "type": "string" } }
+          ],
           "description": "The human-readable name of the BPMN 2.0 process definition."
         },
         "bpmn:businessKey": {
-          "type": "string",
+          "anyOf": [
+            { "type": "string" },
+            { "type": "array", "items": { "type": "string" } }
+          ],
           "description": "The business key associated with the process instance."
         },
         "bpmn:status": {
@@ -157,17 +210,24 @@
           "description": "The execution status of the workflow instance."
         },
         "bpmn:startDate": {
-          "type": "string",
-          "format": "date-time",
+          "anyOf": [
+            { "type": "string", "format": "date-time" },
+            { "type": "array", "items": { "type": "string", "format": "date-time" } }
+          ],
           "description": "The timestamp when the process instance was started."
         },
         "bpmn:endDate": {
-          "type": "string",
-          "format": "date-time",
+          "anyOf": [
+            { "type": "string", "format": "date-time" },
+            { "type": "array", "items": { "type": "string", "format": "date-time" } }
+          ],
           "description": "The timestamp when the process instance completed or terminated."
         },
         "bpmn:startUserId": {
-          "type": "string",
+          "anyOf": [
+            { "type": "string" },
+            { "type": "array", "items": { "type": "string" } }
+          ],
           "description": "The identifier of the user who initiated the process instance."
         },
         "bpmn:variables": {

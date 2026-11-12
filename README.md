@@ -22,12 +22,12 @@ An open specification, community manifesto, and schema standard for secure, deco
 
 ## 📖 Overview
 
-The **Open Ingestion Standard (OIS)** solves the challenge of moving data from enterprise source systems (such as SharePoint, S3 buckets, relational databases, CMIS repositories, and BPMN 2.0 workflow engines) to downstream **Vector Databases / RAG architectures** AND **Cloud / Lakehouse Object Storage** (such as Apache Ozone and AWS S3).
+The **Open Ingestion Standard (OIS)** solves the challenge of moving data from enterprise source systems (such as SharePoint, S3 buckets, relational databases, CMIS repositories, cloud enterprise content platforms, BPMN 2.0 workflow engines, and streaming push protocols) to downstream **Vector Databases / RAG architectures**, **Cloud / Lakehouse Object Storage** (such as Apache Ozone and AWS S3), and **Open Lakehouse Table Formats** (such as Apache Iceberg).
 
 OIS defines:
-1. **[MANIFESTO.md](MANIFESTO.md)**: The architectural pillars of zero-trust fail-closed security mapping, in-flight pre-embedding governance, asynchronous claim checks & persistent `.ois.json` sidecar envelopes, and vendor-neutrality.
-2. **Unified Document Payload & Sidecar Schema (`schemas/document.schema.json`)**: A standard JSON schema to package extracted text, `SHA-256` binary checksums, rich metadata (`cmis:*`, `bpmn:*`, `ois:provenance`, `ois:governance`), and Fail-Closed Security structures (ACLs + ReBAC relationship tuples) — usable both as an in-flight streaming message and as a persistent `<key>.ois.json` sidecar file in object storage.
-3. **Unified Job Configuration Schema (`schemas/job.schema.json`)**: A platform-agnostic configuration schema (YAML/JSON) to declare scheduled or agent-triggered (`AGENTIC` / `ON_DEMAND`) crawlers, pre-embedding PII governance gates, and vector or object-storage target writers.
+1. **[MANIFESTO.md](MANIFESTO.md)**: The architectural pillars of zero-trust fail-closed security mapping, in-flight pre-embedding governance, asynchronous claim checks & persistent `.ois.json` sidecar envelopes, open lakehouse tables, and vendor-neutrality.
+2. **Unified Document Payload & Sidecar Schema (`schemas/document.schema.json`)**: A standard JSON schema to package extracted text, `SHA-256` binary checksums, rich metadata (`cmis:*`, `bpmn:*`, `ois:provenance`, `ois:governance`), and Fail-Closed Security structures (ACLs + ReBAC relationship tuples) — usable as an in-flight streaming message, as a persistent `<key>.ois.json` sidecar file in object storage, and as structured records in open lakehouse tables (Apache Iceberg).
+3. **Unified Job Configuration Schema (`schemas/job.schema.json`)**: A platform-agnostic configuration schema (YAML/JSON) to declare scheduled or agent-triggered (`AGENTIC` / `ON_DEMAND`) crawlers, pre-embedding PII governance gates, and vector, lakehouse table, or object-storage target writers.
 4. **[ois-whitepaper.md](ois-whitepaper.md)**: Comprehensive architectural white paper detailing the enterprise ingestion and migration crisis, core pillars, schemas, and reference designs.
 
 ---

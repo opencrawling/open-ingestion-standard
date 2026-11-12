@@ -333,7 +333,7 @@
             },
             "triggeredBy": {
               "type": "string",
-              "description": "Trigger mechanism (e.g. scheduler, webhook, mcp-agent, manual)."
+              "description": "Trigger mechanism (e.g. scheduler, webhook, mcp-agent, api, system, event, manual)."
             },
             "onBehalfOf": {
               "type": "string",

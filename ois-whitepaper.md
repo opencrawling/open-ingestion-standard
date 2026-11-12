@@ -91,7 +91,7 @@ To protect enterprise source systems from resource exhaustion:
 OIS formalizes two primary JSON schemas:
 
 ### A. Document Payload Schema
-The `document.schema.json` dictates how document text, metadata, lifecycle action (`UPSERT` / `DELETE`), and security settings are wrapped for transport.
+The `document.schema.json` dictates how document text, binary claims, persistent sidecar references, metadata, lifecycle action (`UPSERT` / `DELETE`), and Zero-Trust security settings are wrapped for transport.
 
 ```json
 {
@@ -112,7 +112,8 @@ The `document.schema.json` dictates how document text, metadata, lifecycle actio
       "required": ["type", "instance"],
       "properties": {
         "type": { "type": "string" },
-        "instance": { "type": "string", "format": "uri-reference" }
+        "instance": { "type": "string", "format": "uri-reference" },
+        "connectorVersion": { "type": "string" }
       }
     },
     "content": {
@@ -121,14 +122,26 @@ The `document.schema.json` dictates how document text, metadata, lifecycle actio
       "properties": {
         "mimeType": { "type": "string" },
         "text": { "type": "string" },
-        "claimCheckUri": { "type": "string", "format": "uri-reference" }
+        "claimCheckUri": { "type": "string", "format": "uri-reference" },
+        "sidecarUri": { "type": "string", "format": "uri-reference" },
+        "sha256": { "type": "string", "pattern": "^[a-fA-F0-9]{64}$" },
+        "sizeBytes": { "type": "integer", "minimum": 0 }
       }
     },
-    "metadata": { "type": "object", "additionalProperties": true },
+    "metadata": {
+      "type": "object",
+      "description": "Arbitrary key-value metadata. Declared properties (title, author, lastModified, cmis:*, bpmn:*) accept single scalars or arrays (anyOf) to prevent lossy concatenation.",
+      "additionalProperties": true
+    },
     "security": {
       "type": "object",
       "required": ["inheritanceEnabled", "permissions"],
       "properties": {
+        "evaluationPolicy": {
+          "type": "string",
+          "enum": ["FAIL_CLOSED"],
+          "default": "FAIL_CLOSED"
+        },
         "inheritanceEnabled": { "type": "boolean" },
         "permissions": {
           "type": "array",
@@ -138,7 +151,24 @@ The `document.schema.json` dictates how document text, metadata, lifecycle actio
             "properties": {
               "identity": { "type": "string" },
               "identityType": { "type": "string" },
+              "displayName": { "type": "string" },
               "access": { "type": "string", "enum": ["read", "write", "deny"] }
+            }
+          }
+        },
+        "relationships": {
+          "type": "array",
+          "description": "Zanzibar / OpenFGA relationship tuples for ReBAC authorization.",
+          "items": {
+            "type": "object",
+            "required": ["objectType", "objectId", "relation", "userType", "userId"],
+            "properties": {
+              "objectType": { "type": "string" },
+              "objectId": { "type": "string" },
+              "relation": { "type": "string" },
+              "userType": { "type": "string" },
+              "userId": { "type": "string" },
+              "userRelation": { "type": "string" }
             }
           }
         }
@@ -149,7 +179,7 @@ The `document.schema.json` dictates how document text, metadata, lifecycle actio
 ```
 
 ### B. Job Configuration Schema
-The `job.schema.json` defines declarative templates to schedule and orchestrate ingestion runs.
+The `job.schema.json` defines declarative templates to schedule and orchestrate ingestion and cloud migration runs across vendors.
 
 ```json
 {
@@ -164,14 +194,38 @@ The `job.schema.json` defines declarative templates to schedule and orchestrate 
       "type": "object",
       "required": ["name"],
       "properties": {
-        "name": { "type": "string" }
+        "name": { "type": "string" },
+        "owner": { "type": "string" }
       }
     },
     "spec": {
       "type": "object",
-      "required": ["schedule", "connector", "output"],
+      "required": ["connector", "output"],
+      "anyOf": [
+        { "required": ["schedule"] },
+        { "required": ["trigger"] }
+      ],
       "properties": {
         "schedule": { "type": "string" },
+        "trigger": {
+          "type": "object",
+          "required": ["mode"],
+          "properties": {
+            "mode": { "type": "string", "enum": ["SCHEDULED", "ON_DEMAND", "AGENTIC", "EVENT_DRIVEN"] },
+            "dryRun": { "type": "boolean", "default": false },
+            "idempotencyKey": { "type": "string" },
+            "requiresApproval": { "type": "boolean", "default": false },
+            "delegatedIdentity": {
+              "type": "object",
+              "required": ["onBehalfOf"],
+              "properties": {
+                "onBehalfOf": { "type": "string" },
+                "actorAgent": { "type": "string" },
+                "scopes": { "type": "array", "items": { "type": "string" } }
+              }
+            }
+          }
+        },
         "connector": {
           "type": "object",
           "required": ["type", "config"]
@@ -184,6 +238,23 @@ The `job.schema.json` defines declarative templates to schedule and orchestrate 
               "properties": {
                 "tikaEnabled": { "type": "boolean" },
                 "ocrEnabled": { "type": "boolean" }
+              }
+            },
+            "governance": {
+              "type": "object",
+              "properties": {
+                "enabled": { "type": "boolean", "default": true },
+                "defaultAction": { "type": "string", "enum": ["ALLOW", "REDACT", "DROP"], "default": "REDACT" },
+                "failClosed": { "type": "boolean", "default": true },
+                "piiRedaction": {
+                  "type": "object",
+                  "properties": {
+                    "enabled": { "type": "boolean" },
+                    "categories": { "type": "array", "items": { "type": "string" } },
+                    "replacementToken": { "type": "string", "default": "[REDACTED]" }
+                  }
+                },
+                "webhookUrl": { "type": "string", "format": "uri-reference" }
               }
             },
             "transformation": {
@@ -214,7 +285,13 @@ The `job.schema.json` defines declarative templates to schedule and orchestrate 
         },
         "output": {
           "type": "object",
-          "required": ["type", "config"]
+          "required": ["type", "config"],
+          "properties": {
+            "type": { "type": "string" },
+            "sidecarEnabled": { "type": "boolean" },
+            "verifySha256": { "type": "boolean" },
+            "config": { "type": "object" }
+          }
         }
       }
     }
@@ -251,6 +328,16 @@ In addition to object sidecars, OIS maps structured document records, lineage, a
 * **ACID Transactions & Snapshot Isolation**: Guarantees serializable commits for batch and streaming ingestion pipelines with built-in time-travel and partition pruning capabilities.
 * **Preserved Access Control Columns**: Ingested records carry explicit Zero-Trust permission columns (`allowed_principals`, `denied_principals`, `security_owner`) enabling downstream analytical engines (such as DuckDB, Trino, and Apache Spark) to enforce row-level access control without data duplication.
 * **Dynamic Schema Evolution**: Allows enterprise metadata and extracted document entities to dynamically evolve lakehouse schemas across ingestion runs.
+
+#### 5. Enterprise Metadata Envelope & Lossless Multi-Valued Attributes
+Real-world enterprise content repositories expose rich, multi-valued properties (e.g., CMIS multi-valued attributes, multi-author documents, and taxonomy arrays). Rather than forcing ingestion connectors to flatten these into lossy concatenated strings or emit invalid payloads, OIS `document.schema.json` formalizes pragmatic typing:
+* **Multi-Valued Metadata (`anyOf`)**: Declared string and `date-time` metadata properties (`title`, `author`, `lastModified`, `cmis:*`, `bpmn:*`) accept either a single scalar value or an array of values (`anyOf`), ensuring full fidelity for multi-valued enterprise attributes.
+* **Standard Vocabulary Mappings**:
+  * **Governance Decisions (`ois:governance.decision`)**: `ALLOW` (approved without alteration), `REDACT` (PII or sensitive spans sanitized), `DROP` (rejected and blocked from downstream ingestion).
+  * **Provenance Triggers (`ois:provenance.triggeredBy`)**: Open string field supporting extensible trigger mechanisms (`scheduler`, `webhook`, `mcp-agent`, `api`, `system`, `event`).
+  * **Delegated Multi-Agent Identity**: Bounded to the human user's source permissions (`onBehalfOf`, OAuth 2.0 RFC 8693 `sub`) with the orchestrating agent recorded in `actorAgent` (`act.sub`).
+  * **Open Identity Namespaces**: `identityType` remains open to accommodate domain-specific namespaces (`cmis-user`, `cmis-group`, `windows-sid`, `oauth-group`, `bpmn-assignee`), while downstream runtimes map `*-user` and `*-group` consistently.
+  * **Protected Governance Keys**: Compliant pipeline runtimes MUST treat `ois:provenance` and `ois:governance` as protected keys to prevent transformation hooks or crawlers from forging authorization or redaction claims.
 
 ---
 
@@ -296,8 +383,8 @@ The OIS Initiative is designed for long-term community stewardship. The project 
    * Finalize the OIS 1.0 specifications (`document.schema.json` and `job.schema.json`), including `.ois.json` sidecar conventions, `FAIL_CLOSED` security semantics, ReBAC tuples, pre-embedding governance, and agentic job triggers.
    * Implement automated CI schema validation across all reference examples.
 2. **Phase 2: Client SDKs & Conformance Tools**
-   * Release official Python, Go, and TypeScript SDKs to help developers write compliant source connectors, governance gates, and output writers.
-   * Publish CLI validation binaries and conformance test suites.
+   * Release official Java, Python, TypeScript, and Go SDKs to help developers write compliant source connectors, governance gates, and output writers.
+   * Publish CLI validation binaries and conformance test suites (`ois-conformance`).
 3. **Phase 3: OASIS Open Standardization**
    * Transition the standard to the **OASIS Open Ingestion Standard (OIS) Technical Committee** (see [OASIS-PROPOSAL.md](OASIS-PROPOSAL.md)) to guarantee long-term vendor neutrality and formal alignment with OASIS CMIS, CoSAI, Data Provenance, and XACML/ACAL.
 
@@ -306,4 +393,4 @@ The OIS Initiative is designed for long-term community stewardship. The project 
 ## Conclusion
 The **Open Ingestion Standard** bridges the security and scalability gaps in enterprise RAG pipelines. By standardizing document payloads, preserving source-level security credentials, and enabling declarative configurations, OIS provides a blueprint for robust, future-proof AI data logistics.
 
-For detailed schema files, manifestos, and examples, visit the standard repository: [open-ingestion-standard](file:///Users/piergiorgiolucidi/Documents/workspaces/opencrawling/open-ingestion-standard).
+For detailed schema files, manifestos, and examples, visit the standard repository: [open-ingestion-standard](https://github.com/opencrawling/open-ingestion-standard).

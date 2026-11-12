@@ -16,13 +16,20 @@
   },
   "metadata": {
     "title": "Project Titan - Q3 M&A Due Diligence",
-    "author": "Alice Martin",
+    "author": [
+      "Alice Martin",
+      "Marco Bianchi"
+    ],
     "lastModified": "2026-10-15T14:22:00Z",
     "cmis:objectId": "workspace://SpacesStore/889120-titan-dd",
     "cmis:name": "project-titan.pdf",
     "cmis:objectTypeId": "cmis:document",
     "cmis:versionLabel": "2.0",
     "cmis:isLatestVersion": true,
+    "cmis:secondaryObjectTypeIds": [
+      "P:cm:titled",
+      "P:cm:author"
+    ],
     "ois:provenance": {
       "jobId": "job-agentic-ma-migration-042",
       "triggeredBy": "mcp-agent",
